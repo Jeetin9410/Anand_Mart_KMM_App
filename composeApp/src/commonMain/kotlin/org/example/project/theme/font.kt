@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import kotlinproject.composeapp.generated.resources.Res
+import kotlinproject.composeapp.generated.resources.dancing_script_regular
 import kotlinproject.composeapp.generated.resources.inter_bold
 import kotlinproject.composeapp.generated.resources.inter_extra_light
 import kotlinproject.composeapp.generated.resources.inter_light
@@ -20,6 +21,7 @@ fun interFontFamily(): FontFamily {
         Font(Res.font.inter_regular, FontWeight.Normal),
         Font(Res.font.inter_bold, FontWeight.Bold),
         Font(Res.font.inter_medium_italic, FontWeight.Medium),
+        /*Font(Res.font.dancing_script_regular, FontWeight.Medium),*/
 
     )
 }

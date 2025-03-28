@@ -32,7 +32,7 @@ fun appTypography(): Typography {
         ),
         h4 = TextStyle(
             fontFamily = interFont,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Medium,
             fontSize = 34.sp,
             letterSpacing = 0.25.sp
         ),
@@ -43,7 +43,7 @@ fun appTypography(): Typography {
         ),
         h6 = TextStyle(
             fontFamily = interFont,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             fontSize = 20.sp,
             letterSpacing = 0.15.sp
         ),
