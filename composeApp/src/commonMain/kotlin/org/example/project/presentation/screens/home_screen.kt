@@ -1,6 +1,8 @@
 package org.example.project.presentation.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +23,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,18 +31,33 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.utils.io.core.use
 import kotlinproject.composeapp.generated.resources.Res
 import kotlinproject.composeapp.generated.resources.compose_multiplatform
 import kotlinproject.composeapp.generated.resources.shopping_cart
-import org.example.project.Greeting
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
 import org.example.project.network.Product
 import org.example.project.presentation.viewmodel.ProductViewModel
 import org.example.project.theme.typography.appTypography
+import org.example.project.utils.LoadNetworkImage
+import org.example.project.utils.createHttpClient
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.skia.Image // Skiko's Image class for decoding
+import org.jetbrains.skia.Bitmap
+
 
 class HomeScreen : Screen {
     @Composable
@@ -94,11 +112,7 @@ fun ProductItem(product: Product) {
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(Res.drawable.shopping_cart),
-                contentDescription = product.title,
-                modifier = Modifier.size(64.dp)
-            )
+            NetworkImage("https://media.gettyimages.com/id/182176351/photo/a-picture-of-a-cat-on-a-white-background-looking-up.jpg?s=1024x1024&w=gi&k=20&c=QgL7yuINzxVyrjVMWp7MSjIgarQxB92yELqUUdFuzeo=", modifier =  Modifier.size(100.dp))
 
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -108,4 +122,20 @@ fun ProductItem(product: Product) {
             }
         }
     }
+}
+
+@Composable
+fun NetworkImage(url: String, modifier: Modifier) {
+    val painter = asyncPainterResource(url)
+    println("🚀 Loading image from URL: $url")
+    println("🚀 Loading painter from URL: $painter")
+    KamelImage(
+        resource = painter,
+        contentDescription = "Network Image",
+        modifier = modifier,
+        onLoading = { Text("Loading...") },  // ✅ Shows while loading
+        onFailure = { Text("${it.message}") }  // ✅ Shows if image fails
+    )
+
+
 }

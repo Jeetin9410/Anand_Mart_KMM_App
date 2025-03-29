@@ -14,7 +14,7 @@ kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
     
@@ -37,7 +37,9 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-            implementation("io.ktor:ktor-client-android:2.3.7")
+            implementation("io.ktor:ktor-client-okhttp:2.3.8")
+            implementation("io.ktor:ktor-client-android:2.3.8")
+            //implementation("io.coil-kt:coil-compose:2.6.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -64,6 +66,10 @@ kotlin {
             implementation(libs.ktor.client.cio)
 
             implementation(libs.kotlinx.serialization.json)
+
+            implementation("media.kamel:kamel-image:0.7.1")
+
+            implementation("org.jetbrains.skiko:skiko:0.7.69")
         }
 
         iosMain.dependencies {
@@ -105,12 +111,13 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
 dependencies {
+    implementation(libs.androidx.ui.graphics.android)
     debugImplementation(compose.uiTooling)
 }
 

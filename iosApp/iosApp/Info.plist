@@ -53,5 +53,24 @@
         <string>Fonts/Inter_18pt-Light.ttf</string>
         <string>Fonts/Inter_18pt-SemiBold.ttf</string>
     </array>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <false/>
+        <key>NSExceptionDomains</key>
+        <dict>
+            <key>fakestoreapi.com</key>
+            <dict>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <false/>
+                <key>NSExceptionMinimumTLSVersion</key>
+                <string>TLSv1.2</string>
+                <key>NSRequiresCertificateTransparency</key>
+                <false/>
+            </dict>
+        </dict>
+    </dict>
 </dict>
 </plist>
