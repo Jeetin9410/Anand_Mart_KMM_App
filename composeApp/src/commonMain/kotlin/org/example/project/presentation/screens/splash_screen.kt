@@ -51,7 +51,7 @@ class SplashScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val greeting = remember { Greeting().greet() }
+
 
         // Animation state
         var visible by remember { mutableStateOf(false) }
@@ -59,7 +59,7 @@ class SplashScreen : Screen {
         LaunchedEffect(Unit) {
             visible = true
             delay(3000) // 2-second splash delay
-            //navigator.replace(HomeScreen())
+            navigator.replace(HomeScreen())
         }
         Column(
             Modifier.fillMaxSize(),

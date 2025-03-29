@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    kotlin("plugin.serialization")
 }
 
 kotlin {
@@ -36,6 +37,7 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation("io.ktor:ktor-client-android:2.3.7")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -50,7 +52,24 @@ kotlin {
             implementation(libs.voyager.screenmodel) // optional
             implementation(libs.voyager.tab.navigator) // optional
             implementation(libs.voyager.transitions)
+
+            // ✅ Ktor Core
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.kotlinx.coroutines.core)
+
+            // ✅ HTTP Engines (Platform-Specific)
+            implementation(libs.ktor.client.cio)
+
+            implementation(libs.kotlinx.serialization.json)
         }
+
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin) // ✅ iOS-specific HTTP engine
+        }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
