@@ -62,14 +62,9 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.kotlinx.coroutines.core)
 
-            // ✅ HTTP Engines (Platform-Specific)
-            implementation(libs.ktor.client.cio)
-
             implementation(libs.kotlinx.serialization.json)
 
             implementation("media.kamel:kamel-image:0.7.1")
-
-            implementation("org.jetbrains.skiko:skiko:0.7.69")
         }
 
         iosMain.dependencies {

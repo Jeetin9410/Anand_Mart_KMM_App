@@ -34,6 +34,11 @@ class ApiClient {
 
         expectSuccess = false // Allows you to inspect error responses
 
+        engine {
+            // Common configuration that works for both platforms
+            pipelining = true
+        }
+
         install(Logging) {  // ✅ Add Logging Plugin
             level = LogLevel.ALL  // Logs request & response bodies, headers, etc.
             logger = object : Logger {
