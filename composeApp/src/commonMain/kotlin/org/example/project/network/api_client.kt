@@ -1,24 +1,20 @@
 package org.example.project.network
 
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.plugins.HttpResponseValidator
-import io.ktor.client.plugins.HttpSend
-import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.*
-import io.ktor.client.statement.bodyAsText
-import io.ktor.client.statement.request
-import io.ktor.http.isSuccess
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.request.get
+import io.ktor.client.request.headers
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.decodeFromJsonElement
+import org.example.project.domain.model.Product
+import org.example.project.domain.model.UsersModel
 import org.example.project.getPlatformEngine
 
 class ApiClient {
@@ -60,41 +56,20 @@ class ApiClient {
         //val response: JsonArray = client.get("https://fakestoreapi.com/products").body()
         return Json.decodeFromJsonElement<List<Product>>(response)
     }
+
+    suspend fun getAllUsers() : List<UsersModel> {
+        val response: JsonArray = client.get("https://fakestoreapi.com/users"){
+            headers {
+                append("Content-Type", "application/json")
+            }
+        }.body()
+        //val response: JsonArray = client.get("https://fakestoreapi.com/products").body()
+        return Json.decodeFromJsonElement<List<UsersModel>>(response)
+    }
 }
 
 
 
 
 
-@Serializable
-data class Product(
-    @SerialName("id")
-    val id: Int,
 
-    @SerialName("title")
-    val title: String,
-
-    @SerialName("price")
-    val price: Double,
-
-    @SerialName("description")
-    val description: String,
-
-    @SerialName("category")
-    val category: String,
-
-    @SerialName("image")
-    val image: String,
-
-    @SerialName("rating")
-    val rating: Rating
-)
-
-@Serializable
-data class Rating(
-    @SerialName("rate")
-    val rate: Double,
-
-    @SerialName("count")
-    val count: Int
-)

@@ -33,7 +33,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
-import org.example.project.network.Product
+import org.example.project.domain.model.Product
 import org.example.project.presentation.viewmodel.ProductViewModel
 import org.example.project.theme.typography.appTypography
 

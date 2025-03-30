@@ -65,6 +65,19 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
 
             implementation("media.kamel:kamel-image:0.7.1")
+
+            implementation(libs.composeIcons.simpleIcons)
+            implementation(libs.composeIcons.tablerIcons)
+            implementation(libs.composeIcons.evaIcons)
+            implementation(libs.composeIcons.weatherIcons)
+            implementation(libs.composeIcons.cssGg)
+            implementation(libs.composeIcons.feather)
+            implementation(libs.composeIcons.fontAwesome)
+            implementation(libs.composeIcons.lineAwesome)
+            implementation(libs.composeIcons.linea)
+            implementation(libs.composeIcons.octicons)
+
+            implementation("io.github.khubaibkhan4:alert-kmp:2.0.0")
         }
 
         iosMain.dependencies {
@@ -74,6 +87,7 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.ktor.client.cio)
         }
     }
 }

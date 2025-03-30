@@ -2,35 +2,32 @@ package org.example.project.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import org.example.project.network.ApiClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.example.project.domain.model.Product
+import org.example.project.domain.model.UsersModel
+import org.example.project.network.ApiClient
 
-class ProductViewModel : ViewModel() {
+class LoginViewModel : ViewModel() {
     private val apiClient = ApiClient()
 
-    private val _products = MutableStateFlow<List<Product>>(emptyList())
-    val products: StateFlow<List<Product>> = _products
+    private val _allUsers = MutableStateFlow<List<UsersModel>>(emptyList())
+    val allUsers: StateFlow<List<UsersModel>> = _allUsers
 
-    private val _isLoading = MutableStateFlow(true)
+    private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    init {
-        fetchProducts()
-    }
-
-    private fun fetchProducts() {
+    fun fetchAllUsers() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                _products.value = apiClient.getProducts()
+                _allUsers.value = apiClient.getAllUsers()
             } catch (e: Exception) {
-                println("Error fetching products: ${e.message}")
+                println("Error fetching user details: ${e.message}")
             } finally {
                 _isLoading.value = false
             }
         }
     }
+
 }

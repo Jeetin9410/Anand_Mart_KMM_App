@@ -73,9 +73,9 @@ fun appTypography(): Typography {
         ),
         button = TextStyle(
             fontFamily = interFont,
-            fontWeight = FontWeight.Medium,
-            fontSize = 14.sp,
-            letterSpacing = 1.25.sp
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            letterSpacing = 1.25.sp,
         ),
         caption = TextStyle(
             fontFamily = interFont,
