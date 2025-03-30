@@ -59,8 +59,11 @@ class LoginScreen : Screen {
         val isLoading by loginViewModel.isLoading.collectAsState(false)
 
         LoadingOverlay(isLoading = isLoading) {
-            LoginScreenUi {
-                loginViewModel.fetchAllUsers()
+            Column {
+                Spacer(modifier = Modifier.height(50.dp))
+                LoginScreenUi {
+                    loginViewModel.fetchAllUsers()
+                }
             }
         }
 
