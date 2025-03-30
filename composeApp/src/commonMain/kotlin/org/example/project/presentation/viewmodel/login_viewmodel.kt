@@ -2,9 +2,12 @@ package org.example.project.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.example.project.domain.model.UsersModel
 import org.example.project.network.ApiClient
 
@@ -17,8 +20,8 @@ class LoginViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun fetchAllUsers() {
-        viewModelScope.launch {
+    suspend fun fetchAllUsers() : List<UsersModel> {
+        withContext(Dispatchers.IO) {
             _isLoading.value = true
             try {
                 _allUsers.value = apiClient.getAllUsers()
@@ -28,6 +31,8 @@ class LoginViewModel : ViewModel() {
                 _isLoading.value = false
             }
         }
+
+        return _allUsers.value;
     }
 
 }

@@ -45,6 +45,10 @@ import kotlinproject.composeapp.generated.resources.Res
 import kotlinproject.composeapp.generated.resources.apple
 import kotlinproject.composeapp.generated.resources.facebook
 import kotlinproject.composeapp.generated.resources.google
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import org.example.project.domain.model.UsersModel
 import org.example.project.theme.colors.AppColors
 import org.example.project.theme.typography.appTypography
 import org.example.project.utils.LoadingOverlay
@@ -57,23 +61,32 @@ class LoginScreen : Screen {
         val navigator = LocalNavigator.currentOrThrow
         val loginViewModel = remember { LoginViewModel() }
         val isLoading by loginViewModel.isLoading.collectAsState(false)
+        val coroutineScope = rememberCoroutineScope()
 
         LoadingOverlay(isLoading = isLoading) {
             Column {
                 Spacer(modifier = Modifier.height(50.dp))
-                LoginScreenUi {
-                    loginViewModel.fetchAllUsers()
+                LoginScreenUi { (email, password) ->
+                    coroutineScope.launch {
+                        val users = loginViewModel.fetchAllUsers() // Wait for result
+
+                        val matchedUsers = users.filter { it.email == email && it.password == password }
+                        if (matchedUsers.isEmpty()) {
+                            val notification = createNotification(NotificationType.TOAST)
+                            notification.show("Incorrect email or password!")
+                        } else {
+                            navigator.replace(HomeScreen())
+                        }
+                    }
                 }
             }
         }
-
-
     }
 
 }
 
 @Composable
-fun LoginScreenUi(onTapLog : () -> Unit) {
+fun LoginScreenUi(onTapLog : (Pair<String,String>) -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -142,14 +155,22 @@ fun LoginScreenUi(onTapLog : () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { checkRequiredFields(email, password, onTapLog) },
+            onClick = {
+                checkRequiredFields(email, password,
+                    { onTapLog.invoke(Pair(email, password)) })
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = AppColors.buttonPrimary), //Color(0xFF435C3B)
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text("Login", color = Color.White, fontWeight = FontWeight.Bold, style = appTypography().button)
+            Text(
+                "Login",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                style = appTypography().button
+            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -176,6 +197,10 @@ fun LoginScreenUi(onTapLog : () -> Unit) {
             Text("Don't have an account? Register Now", color = Color(0xFF435C3B), fontWeight = FontWeight.Bold, style = appTypography().body2)
         }
     }
+}
+
+fun checkValidUserOrNot(allUsers: List<UsersModel>, email: String, password: String) {
+
 }
 
 fun checkRequiredFields(email : String, password: String, onTapLog: () -> Unit) {
