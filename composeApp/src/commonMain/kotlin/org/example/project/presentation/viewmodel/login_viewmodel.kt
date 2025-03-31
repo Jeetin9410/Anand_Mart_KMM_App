@@ -2,6 +2,7 @@ package org.example.project.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,8 +12,7 @@ import kotlinx.coroutines.withContext
 import org.example.project.domain.model.UsersModel
 import org.example.project.network.ApiClient
 
-class LoginViewModel : ViewModel() {
-    private val apiClient = ApiClient()
+class LoginViewModel(private val apiClient: ApiClient) : ViewModel() {
 
     private val _allUsers = MutableStateFlow<List<UsersModel>>(emptyList())
     val allUsers: StateFlow<List<UsersModel>> = _allUsers

@@ -36,13 +36,14 @@ import io.kamel.image.asyncPainterResource
 import org.example.project.domain.model.Product
 import org.example.project.presentation.viewmodel.ProductViewModel
 import org.example.project.theme.typography.appTypography
+import org.koin.compose.viewmodel.koinViewModel
 
 
 class HomeScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val productViewModel = remember { ProductViewModel() }
+        val productViewModel = koinViewModel<ProductViewModel>()
         val products by productViewModel.products.collectAsState()
         val isLoading by productViewModel.isLoading.collectAsState()
 

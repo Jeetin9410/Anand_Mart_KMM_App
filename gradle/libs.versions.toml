@@ -1,5 +1,6 @@
 [versions]
 agp = "8.5.2"
+alertKmp = "2.0.0"
 android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "35"
@@ -13,6 +14,9 @@ androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
 compose-multiplatform = "1.7.3"
 junit = "4.13.2"
+koinAndroid = "3.5.0"
+koinCore = "4.0.0"
+
 kotlin = "2.1.10"
 kotlinx-coroutines = "1.10.1"
 kotlinxSerializationJson = "1.6.2"
@@ -23,6 +27,7 @@ uiGraphicsAndroid = "1.7.8"
 composeIcons = "1.1.1"
 
 [libraries]
+alert-kmp = { module = "io.github.khubaibkhan4:alert-kmp", version.ref = "alertKmp" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -60,6 +65,13 @@ composeIcons-linea = { module = "br.com.devsrsouza.compose.icons:linea", version
 composeIcons-octicons = { module = "br.com.devsrsouza.compose.icons:octicons", version.ref = "composeIcons" }
 composeIcons-simpleIcons = { module = "br.com.devsrsouza.compose.icons:simple-icons", version.ref = "composeIcons" }
 composeIcons-tablerIcons = { module = "br.com.devsrsouza.compose.icons:tabler-icons", version.ref = "composeIcons" }
+
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinCore" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koinCore" }
+koin-androidx-compose = {module = "io.insert-koin:koin-androidx-compose", version.ref = 'koinCore'}
+koin-compose = {module = "io.insert-koin:koin-compose", version.ref = 'koinCore'}
+koin-compose-viewmodel = {module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koinCore"}
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

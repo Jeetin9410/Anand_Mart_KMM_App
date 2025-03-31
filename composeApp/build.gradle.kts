@@ -39,7 +39,8 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation("io.ktor:ktor-client-okhttp:2.3.8")
             implementation("io.ktor:ktor-client-android:2.3.8")
-            //implementation("io.coil-kt:coil-compose:2.6.0")
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -77,7 +78,11 @@ kotlin {
             implementation(libs.composeIcons.linea)
             implementation(libs.composeIcons.octicons)
 
-            implementation("io.github.khubaibkhan4:alert-kmp:2.0.0")
+            implementation(libs.alert.kmp)
+
+            api(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
         }
 
         iosMain.dependencies {

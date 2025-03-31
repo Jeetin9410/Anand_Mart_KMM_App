@@ -53,13 +53,14 @@ import org.example.project.theme.colors.AppColors
 import org.example.project.theme.typography.appTypography
 import org.example.project.utils.LoadingOverlay
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 
 class LoginScreen : Screen {
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val loginViewModel = remember { LoginViewModel() }
+        val loginViewModel = koinViewModel<LoginViewModel>()
         val isLoading by loginViewModel.isLoading.collectAsState(false)
         val coroutineScope = rememberCoroutineScope()
 
