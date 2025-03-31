@@ -10,9 +10,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.example.project.domain.model.UsersModel
+import org.example.project.domain.repository.LoginRepository
 import org.example.project.network.ApiClient
 
-class LoginViewModel(private val apiClient: ApiClient) : ViewModel() {
+class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
 
     private val _allUsers = MutableStateFlow<List<UsersModel>>(emptyList())
     val allUsers: StateFlow<List<UsersModel>> = _allUsers
@@ -24,7 +25,7 @@ class LoginViewModel(private val apiClient: ApiClient) : ViewModel() {
         withContext(Dispatchers.IO) {
             _isLoading.value = true
             try {
-                _allUsers.value = apiClient.getAllUsers()
+                _allUsers.value = loginRepository.getAllUsers()
             } catch (e: Exception) {
                 println("Error fetching user details: ${e.message}")
             } finally {
