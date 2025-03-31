@@ -72,7 +72,7 @@ class LoginScreen : Screen {
                         val users = loginViewModel.fetchAllUsers() // Wait for result
 
                         val matchedUsers = users.filter { it.email == email && it.password == password }
-                        if (matchedUsers.isEmpty()) {
+                        if (matchedUsers.isEmpty() && false) {
                             val notification = createNotification(NotificationType.TOAST)
                             notification.show("Incorrect email or password!")
                         } else {

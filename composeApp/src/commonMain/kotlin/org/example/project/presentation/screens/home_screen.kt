@@ -2,11 +2,15 @@ package org.example.project.presentation.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,11 +18,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Colors
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,7 +39,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -35,7 +52,9 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import org.example.project.domain.model.Product
 import org.example.project.presentation.viewmodel.ProductViewModel
+import org.example.project.theme.colors.AppColors
 import org.example.project.theme.typography.appTypography
+import org.example.project.utils.toPriceString
 import org.koin.compose.viewmodel.koinViewModel
 
 
@@ -67,38 +86,24 @@ class HomeScreen : Screen {
             if (isLoading) {
                 CircularProgressIndicator()
             } else {
-                LazyColumn(
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(2.dp),
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     items(products) { product ->
-                        ProductItem(product)
+                        ProductItem(
+                            product = product,
+                            modifier = Modifier.padding(4.dp),
+                            onClick = {  }
+                        )
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-        }
-    }
-}
-
-@Composable
-fun ProductItem(product: Product) {
-    Card(
-        elevation = 4.dp,
-        modifier = Modifier.fillMaxWidth().padding(8.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            NetworkImage(product.image, Modifier.size(100.dp))
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column {
-                Text(text = product.title, style = MaterialTheme.typography.h6)
-                Text(text = "$${product.price}", style = MaterialTheme.typography.body1)
-            }
         }
     }
 }
@@ -113,7 +118,112 @@ fun NetworkImage(url: String, modifier: Modifier) {
         animationSpec = tween(1000),
         onLoading = { Text("Loading...") },
         onFailure = { Text("${it.message}") }
+
     )
+}
 
+@Composable
+fun ProductItem(
+    product: Product,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(2.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
+        elevation = 4.dp
+    ) {
+        Column {
 
+            NetworkImage(product.image, modifier = Modifier
+                .fillMaxWidth()
+                .padding(2.dp)
+                .aspectRatio(1f))
+            Spacer(modifier = Modifier.height(1.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(end = 5.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                product.category.let {
+                    CategoryChip(category = it)
+                }
+
+            }
+
+            Spacer(modifier = Modifier.height(1.dp))
+
+            // Product details
+            Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 12.dp )) {
+                Text(
+                    text = product.title,
+                    style = appTypography().body2,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Price and Rating row
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = product.price.toPriceString(),
+                        style = MaterialTheme.typography.caption.copy(
+                            color = AppColors.textPrimary
+                        ),
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    RatingBar(rating = product.rating.rate)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RatingBar(
+    rating: Double,
+    maxStars: Int = 5
+) {
+    Row {
+        Icon(
+            imageVector = Icons.Default.Star,
+            contentDescription = null,
+            tint = AppColors.secondary,
+            modifier = Modifier.size(16.dp)
+        )
+
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = rating.toString(),
+            style = appTypography().body2.copy(fontSize = 12.sp),
+            color = AppColors.textSecondary
+        )
+    }
+}
+
+@Composable
+fun CategoryChip(category: String,modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(AppColors.primaryBackground)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        Text(
+            text = category.replaceFirstChar { it.titlecase() },
+            style = appTypography().overline,
+            color = AppColors.primary
+        )
+    }
 }

@@ -87,7 +87,7 @@ fun appTypography(): Typography {
             fontFamily = interFont,
             fontWeight = FontWeight.Normal,
             fontSize = 10.sp,
-            letterSpacing = 1.5.sp
+            letterSpacing = 0.4.sp
         )
     )
 }

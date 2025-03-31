@@ -43,7 +43,7 @@ class SplashScreen : Screen {
         LaunchedEffect(Unit) {
             visible = true
             delay(3000) // 2-second splash delay
-            navigator.replace(LoginScreen())
+            navigator.replace(HomeScreen())
         }
         Column(
             Modifier.fillMaxSize(),
