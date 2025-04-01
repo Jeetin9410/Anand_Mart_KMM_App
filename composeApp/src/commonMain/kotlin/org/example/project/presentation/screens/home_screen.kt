@@ -50,23 +50,27 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
+import org.example.project.config.AppConfig
 import org.example.project.domain.model.Product
 import org.example.project.presentation.viewmodel.ProductViewModel
 import org.example.project.theme.colors.AppColors
 import org.example.project.theme.typography.appTypography
 import org.example.project.utils.toPriceString
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 
-class HomeScreen : Screen {
+class HomeScreen : Screen, KoinComponent {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val productViewModel = koinViewModel<ProductViewModel>()
+        val appConfig: AppConfig = get()
         val products by productViewModel.products.collectAsState()
         val isLoading by productViewModel.isLoading.collectAsState()
 
-        var showContent by remember { mutableStateOf(false) }
+        var showContent by remember { mutableStateOf(true) }
 
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -76,7 +80,7 @@ class HomeScreen : Screen {
             // Animated Visibility for Greeting
             AnimatedVisibility(visible = showContent) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Welcome to Anand Mart!", style = appTypography().h4)
+                    Text("Welcome to Anand Mart!\n${appConfig.getString(LoginScreen.ARG_EMAIL)}", style = appTypography().h6)
                 }
             }
 
@@ -160,7 +164,7 @@ fun ProductItem(
             Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 12.dp )) {
                 Text(
                     text = product.title,
-                    style = appTypography().body2,
+                    style = appTypography().body1,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Bold

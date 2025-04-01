@@ -9,11 +9,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.example.project.config.AppConfig
 import org.example.project.domain.model.UsersModel
 import org.example.project.domain.repository.LoginRepository
 import org.example.project.network.ApiClient
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class LoginViewModel(
+    private val loginRepository: LoginRepository,
+    private val appConfig: AppConfig,
+    ) : ViewModel() {
 
     private val _allUsers = MutableStateFlow<List<UsersModel>>(emptyList())
     val allUsers: StateFlow<List<UsersModel>> = _allUsers

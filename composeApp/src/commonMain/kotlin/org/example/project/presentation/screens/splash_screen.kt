@@ -28,13 +28,17 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinproject.composeapp.generated.resources.Res
 import kotlinproject.composeapp.generated.resources.compose_multiplatform
 import kotlinx.coroutines.delay
+import org.example.project.config.AppConfig
 import org.example.project.theme.typography.appTypography
 import org.jetbrains.compose.resources.painterResource
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
-class SplashScreen : Screen {
+class SplashScreen : Screen, KoinComponent {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val appConfig: AppConfig = get()
 
 
         // Animation state
@@ -42,8 +46,12 @@ class SplashScreen : Screen {
 
         LaunchedEffect(Unit) {
             visible = true
-            delay(3000) // 2-second splash delay
-            navigator.replace(HomeScreen())
+            delay(3000) // 3-second splash delay
+            if(appConfig.getBoolean(LoginScreen.ARG_IS_LOGGED_IN)){
+                navigator.replace(HomeScreen())
+            } else {
+                navigator.replace(LoginScreen())
+            }
         }
         Column(
             Modifier.fillMaxSize(),

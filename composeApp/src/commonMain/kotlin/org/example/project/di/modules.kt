@@ -1,5 +1,8 @@
 package org.example.project.di
 
+import com.russhwolf.settings.Settings
+import org.example.project.config.AppConfig
+import org.example.project.config.AppConfigImpl
 import org.example.project.domain.repository.*
 import org.example.project.getPlatformEngine
 import org.example.project.network.ApiClient
@@ -18,6 +21,7 @@ expect val platformModule: Module
 val sharedModule = module {
     single { provideHttpClient(getPlatformEngine()) }
     single { ApiClient(get()) }
+    singleOf(::AppConfigImpl).binds(arrayOf(AppConfig::class))
 
     singleOf(::LoginRepositoryImpl).binds(arrayOf(LoginRepository::class))
     singleOf(::HomeRepositoryImpl).binds(arrayOf(HomeRepository::class))

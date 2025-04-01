@@ -48,21 +48,32 @@ import kotlinproject.composeapp.generated.resources.google
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import org.example.project.config.AppConfig
 import org.example.project.domain.model.UsersModel
 import org.example.project.theme.colors.AppColors
 import org.example.project.theme.typography.appTypography
 import org.example.project.utils.LoadingOverlay
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
-class LoginScreen : Screen {
+class LoginScreen : Screen, KoinComponent {
+
+    companion object {
+        const val ARG_IS_LOGGED_IN = "arg_is_logged_in"
+        const val ARG_EMAIL = "email"
+        const val ARG_PASSWORD = "password"
+    }
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val loginViewModel = koinViewModel<LoginViewModel>()
+        val appConfig: AppConfig = get()
         val isLoading by loginViewModel.isLoading.collectAsState(false)
         val coroutineScope = rememberCoroutineScope()
+
 
         LoadingOverlay(isLoading = isLoading) {
             Column {
@@ -72,10 +83,13 @@ class LoginScreen : Screen {
                         val users = loginViewModel.fetchAllUsers() // Wait for result
 
                         val matchedUsers = users.filter { it.email == email && it.password == password }
-                        if (matchedUsers.isEmpty() && false) {
+                        if (matchedUsers.isEmpty()) {
                             val notification = createNotification(NotificationType.TOAST)
                             notification.show("Incorrect email or password!")
                         } else {
+                            appConfig.putBoolean(ARG_IS_LOGGED_IN, true)
+                            appConfig.putString(ARG_EMAIL, email)
+                            appConfig.putString(ARG_PASSWORD, password)
                             navigator.replace(HomeScreen())
                         }
                     }

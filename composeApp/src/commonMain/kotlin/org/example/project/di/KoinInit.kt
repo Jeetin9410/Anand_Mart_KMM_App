@@ -8,6 +8,6 @@ import org.koin.mp.KoinPlatform.startKoin
 fun initKoin(configuration: KoinAppDeclaration? = null) {
     startKoin {
         configuration?.invoke(this)
-        modules(sharedModule, platformModule)
+        modules(platformModule , sharedModule)
     }
 }

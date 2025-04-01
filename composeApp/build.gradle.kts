@@ -41,6 +41,7 @@ kotlin {
             implementation("io.ktor:ktor-client-android:2.3.8")
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
+            implementation(libs.androidx.preference.ktx)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -83,6 +84,9 @@ kotlin {
             api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
+
+            implementation(libs.multiplatform.settings)
+            implementation(libs.multiplatform.settings.coroutines)
         }
 
         iosMain.dependencies {
