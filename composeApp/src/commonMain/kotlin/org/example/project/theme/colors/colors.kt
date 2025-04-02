@@ -8,6 +8,9 @@ object AppColors {
     val secondary = Color(0xFFFFE24B)
     val accent = Color(0xFFb0c7ff)
 
+    val selected = Color(0xFF1565C0)
+    val unselected = Color(0xFFC4C4C4)
+
     // Text Colors
     val textPrimary = Color(0xFF333333)
     val textSecondary = Color(0xFF6C757D)

@@ -1,4 +1,4 @@
-package org.example.project.presentation.screens
+package org.example.project.presentation.screens.login
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,12 +19,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextButton
-import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -45,11 +43,10 @@ import kotlinproject.composeapp.generated.resources.Res
 import kotlinproject.composeapp.generated.resources.apple
 import kotlinproject.composeapp.generated.resources.facebook
 import kotlinproject.composeapp.generated.resources.google
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.example.project.config.AppConfig
 import org.example.project.domain.model.UsersModel
+import org.example.project.presentation.screens.main_screen.MainScreen
 import org.example.project.theme.colors.AppColors
 import org.example.project.theme.typography.appTypography
 import org.example.project.utils.LoadingOverlay
@@ -90,7 +87,7 @@ class LoginScreen : Screen, KoinComponent {
                             appConfig.putBoolean(ARG_IS_LOGGED_IN, true)
                             appConfig.putString(ARG_EMAIL, email)
                             appConfig.putString(ARG_PASSWORD, password)
-                            navigator.replace(HomeScreen())
+                            navigator.replace(MainScreen())
                         }
                     }
                 }

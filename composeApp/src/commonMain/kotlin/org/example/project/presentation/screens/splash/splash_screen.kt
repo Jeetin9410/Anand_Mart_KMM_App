@@ -1,4 +1,4 @@
-package org.example.project.presentation.screens
+package org.example.project.presentation.screens.splash
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -29,6 +29,8 @@ import kotlinproject.composeapp.generated.resources.Res
 import kotlinproject.composeapp.generated.resources.compose_multiplatform
 import kotlinx.coroutines.delay
 import org.example.project.config.AppConfig
+import org.example.project.presentation.screens.main_screen.MainScreen
+import org.example.project.presentation.screens.login.LoginScreen
 import org.example.project.theme.typography.appTypography
 import org.jetbrains.compose.resources.painterResource
 import org.koin.core.component.KoinComponent
@@ -48,7 +50,7 @@ class SplashScreen : Screen, KoinComponent {
             visible = true
             delay(3000) // 3-second splash delay
             if(appConfig.getBoolean(LoginScreen.ARG_IS_LOGGED_IN)){
-                navigator.replace(HomeScreen())
+                navigator.replace(MainScreen())
             } else {
                 navigator.replace(LoginScreen())
             }

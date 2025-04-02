@@ -3,13 +3,15 @@ package org.example.project.utils
 
 import androidx.compose.ui.graphics.Color
 
-/*
+
 object AppColors {
     // App Basic Colors
     val primary = Color(0xFF4b68ff)
     val secondary = Color(0xFFFFE24B)
     val accent = Color(0xFFb0c7ff)
 
+    val selected = Color(0xFF0029FD) // Rich blue
+    val unselected = Color(0xFF424242)
     // Text Colors
     val textPrimary = Color(0xFF333333)
     val textSecondary = Color(0xFF6C757D)
@@ -47,4 +49,4 @@ object AppColors {
     val softGrey = Color(0xFF4F4F4F) // Duplicate of darkerGrey?
     val lightGrey = Color(0xFFF9F9F9)
     val white = Color.White
-}*/
+}
