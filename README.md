@@ -1,14 +1,39 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop.
+<div align="center">
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+# 🛍️ Anand Mart - Kotlin Multiplatform E-Commerce App 
+### *One Codebase, Two Platforms - Flawless Shopping Experience*
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+A cutting-edge **Kotlin Multiplatform** project demonstrating a shared **Jetpack Compose** UI for **Android** and **iOS**, built entirely in Kotlin. This app leverages modern architecture patterns, declarative UI, and powerful libraries to deliver a seamless cross-platform experience.
 
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.20-blue.svg?logo=kotlin)](https://kotlinlang.org)
+[![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-1.5.10-red.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+▶️ [Android Demo](#) | ▶️ [iOS Demo](#)
+
+</div>
+
+---
+
+## 🛠 Tech Stack & Libraries  
+
+| Category          | Libraries/Tools                                                                                     |
+|-------------------|----------------------------------------------------------------------------------------------------|
+| **Dependency Injection**  | [![Koin](https://img.shields.io/badge/Koin-✓-blue?logo=kotlin)](https://insert-koin.io/)          |
+| **Navigation**           | [![Voyager](https://img.shields.io/badge/Voyager-✓-orange)](https://voyager.adriel.cafe/)         |
+| **Networking**           | [![Ktor](https://img.shields.io/badge/Ktor-✓-success)](https://ktor.io/)                          |
+| **Local Storage**        | [![Multiplatform Settings](https://img.shields.io/badge/SharedPref-✓-yellow)](https://github.com/russhwolf/multiplatform-settings) |
+| **Image Loading**        | [![Coil](https://img.shields.io/badge/Coil-✓-purple)](https://coil-kt.github.io/coil/) / [![Glide](https://img.shields.io/badge/Glide-✓-green)](https://bumptech.github.io/glide/) |
+| **Async**                | [![Coroutines](https://img.shields.io/badge/Coroutines-✓-brightgreen)](https://kotlinlang.org/docs/coroutines-guide.html) |
+| **Icons**                | [![Compose Icons](https://img.shields.io/badge/Compose_Icons-✓-red)](https://github.com/DevSrSouza/compose-icons) |
+
+---
+
+### ✨ Technical Highlights
+- **100% Shared Compose UI** across platforms
+- **MVVM Architecture** with clean separation
+- **Real-time sync** of cart/orders
+- **Offline-first** capability
+
+---
+
