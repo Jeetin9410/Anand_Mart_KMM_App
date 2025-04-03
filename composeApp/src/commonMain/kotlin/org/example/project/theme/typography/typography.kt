@@ -39,12 +39,12 @@ fun appTypography(): Typography {
         h5 = TextStyle(
             fontFamily = interFont,
             fontWeight = FontWeight.Normal,
-            fontSize = 24.sp
+            fontSize = 20.sp
         ),
         h6 = TextStyle(
             fontFamily = interFont,
             fontWeight = FontWeight.Normal,
-            fontSize = 20.sp,
+            fontSize = 18.sp,
             letterSpacing = 0.15.sp
         ),
         subtitle1 = TextStyle(
