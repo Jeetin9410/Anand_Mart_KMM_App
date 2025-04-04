@@ -20,11 +20,11 @@ import org.jetbrains.compose.resources.Font
 @Composable
 fun interFontFamily(): FontFamily {
     return FontFamily(
-        Font(Res.font.inter_extra_light, FontWeight.ExtraLight),
-        Font(Res.font.poppins_lt, FontWeight.Light),
-        Font(Res.font.poppins_rg, FontWeight.Normal),
-        Font(Res.font.poppins_bd, FontWeight.Bold),
-        Font(Res.font.poppins_med, FontWeight.Medium),
+        //Font(Res.font.inter_extra_light, FontWeight.ExtraLight),
+        Font(Res.font.poppins_lt, FontWeight.ExtraLight),
+        Font(Res.font.poppins_rg, FontWeight.Light),
+        Font(Res.font.poppins_bd, FontWeight.Normal),
+        Font(Res.font.poppins_med, FontWeight.Bold),
 
 
     )

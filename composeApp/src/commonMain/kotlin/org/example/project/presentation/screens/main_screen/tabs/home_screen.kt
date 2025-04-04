@@ -58,6 +58,7 @@ import org.example.project.presentation.screens.login.LoginScreen
 import org.example.project.presentation.viewmodel.ProductViewModel
 import org.example.project.theme.colors.AppColors
 import org.example.project.theme.typography.appTypography
+import org.example.project.utils.shimmerEffect
 import org.example.project.utils.toPriceString
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.component.KoinComponent
@@ -85,6 +86,7 @@ class HomeScreen : Screen, KoinComponent {
                 Text(
                     text = "Hi Jeetin,",
                     style = appTypography().h6,
+                    fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Start,
                     modifier = Modifier.fillMaxWidth().padding(start = 5.dp)
                 )
@@ -99,16 +101,17 @@ class HomeScreen : Screen, KoinComponent {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Display Products
-                if (isLoading) {
-                    CircularProgressIndicator()
-                } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier.fillMaxWidth(),
-                        contentPadding = PaddingValues(2.dp),
-                        horizontalArrangement = Arrangement.spacedBy(2.dp),
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
+
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(2.dp),
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    if (isLoading) {
+                        items(6) { ProductSkeletonLoader() }
+                    } else {
                         items(products) { product ->
                             ProductItem(
                                 product = product,
@@ -117,6 +120,7 @@ class HomeScreen : Screen, KoinComponent {
                             )
                         }
                     }
+
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -280,4 +284,40 @@ fun OffersCarousel() {
     ) /*{ clickedItem ->
         // Handle click
     }*/
+}
+
+@Composable
+fun ProductSkeletonLoader() {
+    Column(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+    ) {
+        Box(
+            modifier = Modifier
+                .size(150.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .shimmerEffect()
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Box(
+            modifier = Modifier
+                .height(20.dp)
+                .fillMaxWidth(0.6f)
+                .clip(RoundedCornerShape(4.dp))
+                .shimmerEffect()
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Box(
+            modifier = Modifier
+                .height(15.dp)
+                .fillMaxWidth(0.4f)
+                .clip(RoundedCornerShape(4.dp))
+                .shimmerEffect()
+        )
+    }
 }
