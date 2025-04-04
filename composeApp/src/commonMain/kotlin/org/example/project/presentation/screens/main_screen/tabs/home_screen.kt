@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -47,13 +48,28 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import compose.icons.AllIcons
+import compose.icons.FontAwesomeIcons
+import compose.icons.fontawesomeicons.Brands
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
+import kotlinproject.composeapp.generated.resources.Res
+import kotlinproject.composeapp.generated.resources.armaani
+import kotlinproject.composeapp.generated.resources.chanel
+import kotlinproject.composeapp.generated.resources.facebook
+import kotlinproject.composeapp.generated.resources.google
+import kotlinproject.composeapp.generated.resources.lv
+import kotlinproject.composeapp.generated.resources.nike
+import kotlinproject.composeapp.generated.resources.rolex
 import org.example.project.config.AppConfig
 import org.example.project.domain.model.Product
 import org.example.project.presentation.components.AppBarRow
 import org.example.project.presentation.components.BannerItem
+import org.example.project.presentation.components.BrandItem
+import org.example.project.presentation.components.BrandsTabs
+import org.example.project.presentation.components.CategoryChipsTabs
 import org.example.project.presentation.components.ParallaxCarouselBanner
+import org.example.project.presentation.components.SearchBar
 import org.example.project.presentation.screens.login.LoginScreen
 import org.example.project.presentation.viewmodel.ProductViewModel
 import org.example.project.theme.colors.AppColors
@@ -73,35 +89,54 @@ class HomeScreen : Screen, KoinComponent {
         val appConfig: AppConfig = get()
         val products by productViewModel.products.collectAsState()
         val isLoading by productViewModel.isLoading.collectAsState()
+        var query by remember { mutableStateOf("") }
+        val categories = listOf("Men's Clothing", "Women's Clothing", "Electronics", "Shoes", "Watches")
+        var selectedCategory by remember { mutableStateOf(categories.first()) }
 
-        var showContent by remember { mutableStateOf(true) }
 
         Scaffold(topBar = {
             AppBarRow(subText = "A-Block, 22/D, Mayapuri, Delhi....")
         }) {
             Column(
                 modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "Hi Jeetin,",
-                    style = appTypography().h6,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.fillMaxWidth().padding(start = 5.dp)
-                )
-                Text(
-                    text = "Welcome to Anand Mart",
-                    style = appTypography().body2,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.fillMaxWidth().padding(start = 5.dp)
+                SearchBar(
+                    query = query,
+                    onQueryChange = { query = it },
+                    onSearch = { }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 OffersCarousel()
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Display Products
-
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Top Brands", style = appTypography().h6)
+                    Text("See more", style = appTypography().caption.copy(color = Color.DarkGray))
+                }
+                BrandsTabs(
+                    categories = listOf(
+                        BrandItem(1, "",Res.drawable.nike ),
+                        BrandItem(2, "",Res.drawable.rolex ),
+                        BrandItem(3, "",Res.drawable.lv ),
+                        BrandItem(4, "",Res.drawable.chanel ),
+                        BrandItem(5, "",Res.drawable.armaani )),
+                    onCategorySelected = { }
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Top Categories", style = appTypography().h6)
+                    Text("See more", style = appTypography().caption.copy(color = Color.DarkGray))
+                }
+                CategoryChipsTabs(
+                    categories = categories,
+                    selectedCategory = selectedCategory,
+                    onCategorySelected = { selectedCategory = it }
+                )
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier.fillMaxWidth(),
@@ -162,10 +197,9 @@ fun ProductItem(
         Column {
 
             NetworkImage(
-                product.image, modifier = Modifier
+                product.image, modifier = Modifier.height(100.dp)
                     .fillMaxWidth()
-                    .padding(2.dp)
-                    .aspectRatio(1f)
+                    .padding(2.dp),
             )
             Spacer(modifier = Modifier.height(1.dp))
 
@@ -203,7 +237,7 @@ fun ProductItem(
                         style = MaterialTheme.typography.caption.copy(
                             color = AppColors.textPrimary
                         ),
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Normal
                     )
 
                     RatingBar(rating = product.rating.rate)

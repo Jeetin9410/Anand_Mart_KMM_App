@@ -32,7 +32,7 @@ import org.example.project.presentation.screens.main_screen.tabs.NetworkImage
 fun ParallaxCarouselBanner(
     items: List<BannerItem>,
     autoScrollInterval: Long = 5000L,
-    bannerHeight: Dp = 180.dp,
+    bannerHeight: Dp = 150.dp,
     cornerRadius: Dp = 16.dp,
     modifier: Modifier = Modifier
 ) {

@@ -43,7 +43,7 @@ fun appTypography(): Typography {
         ),
         h6 = TextStyle(
             fontFamily = interFont,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
             letterSpacing = 0.15.sp
         ),
