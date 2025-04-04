@@ -4,23 +4,34 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
@@ -82,6 +93,7 @@ import org.koin.core.component.get
 
 
 class HomeScreen : Screen, KoinComponent {
+    @OptIn(ExperimentalLayoutApi::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
@@ -92,13 +104,14 @@ class HomeScreen : Screen, KoinComponent {
         var query by remember { mutableStateOf("") }
         val categories = listOf("Men's Clothing", "Women's Clothing", "Electronics", "Shoes", "Watches")
         var selectedCategory by remember { mutableStateOf(categories.first()) }
-
+        val scrollState = rememberScrollState()
 
         Scaffold(topBar = {
             AppBarRow(subText = "A-Block, 22/D, Mayapuri, Delhi....")
         }) {
             Column(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)
+                    .verticalScroll(scrollState),
             ) {
                 SearchBar(
                     query = query,
@@ -137,7 +150,7 @@ class HomeScreen : Screen, KoinComponent {
                     selectedCategory = selectedCategory,
                     onCategorySelected = { selectedCategory = it }
                 )
-                LazyVerticalGrid(
+                /*LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = PaddingValues(2.dp),
@@ -155,10 +168,26 @@ class HomeScreen : Screen, KoinComponent {
                             )
                         }
                     }
-
+                }*/
+                products.chunked(2).forEach { rowItems ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        rowItems.forEach { product ->
+                            ProductItem(
+                                modifier = Modifier.weight(1f),
+                                product = product
+                            )
+                        }
+                        if (rowItems.size == 1) {
+                            Spacer(Modifier.weight(1f))
+                        }
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+
+                Spacer(modifier = Modifier.height(80.dp))
             }
         }
 
@@ -321,9 +350,9 @@ fun OffersCarousel() {
 }
 
 @Composable
-fun ProductSkeletonLoader() {
+fun ProductSkeletonLoader(modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(8.dp)
             .fillMaxWidth()
     ) {
