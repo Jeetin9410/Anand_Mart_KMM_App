@@ -86,16 +86,16 @@ class HomeScreen : Screen, KoinComponent {
                     text = "Hi Jeetin,",
                     style = appTypography().h6,
                     textAlign = TextAlign.Start,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp)
+                    modifier = Modifier.fillMaxWidth().padding(start = 5.dp)
                 )
                 Text(
                     text = "Welcome to Anand Mart",
                     style = appTypography().body2,
                     textAlign = TextAlign.Start,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp)
+                    modifier = Modifier.fillMaxWidth().padding(start = 5.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                MovieCarousel()
+                OffersCarousel()
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Display Products
@@ -250,7 +250,7 @@ fun CategoryChip(category: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun MovieCarousel() {
+fun OffersCarousel() {
     val sampleItems = listOf(
         BannerItem(
             "https://as2.ftcdn.net/jpg/03/09/86/97/1000_F_309869755_IquCHHxF7YABo2odctUGEjMrgVDSM8qV.jpg",
@@ -264,11 +264,13 @@ fun MovieCarousel() {
         ),
         BannerItem(
             "https://as2.ftcdn.net/jpg/13/47/26/83/1000_F_1347268361_6HLdvxQSx7CtN4WLJHHOrXe9i7mCQ2dt.jpg",
-            "Limited Offer"
+            "Limited Offer",
+            "Buy 1 Get 1 Free"
         ),
         BannerItem(
             "https://as2.ftcdn.net/jpg/12/84/42/03/1000_F_1284420360_QNQcVKCSWUINl8Xp4GBB1dUqgVyLQZ5h.jpg",
-            "Limited Offer"
+            "Limited Offer",
+            "20% Flat Discount"
         ),
     )
 
