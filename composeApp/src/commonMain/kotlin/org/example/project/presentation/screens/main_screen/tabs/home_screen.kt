@@ -181,10 +181,9 @@ fun ProductItem(
             Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 12.dp)) {
                 Text(
                     text = product.title,
-                    style = appTypography().body1,
+                    style = appTypography().subtitle2,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    fontWeight = FontWeight.Bold
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))

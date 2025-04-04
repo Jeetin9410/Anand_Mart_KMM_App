@@ -49,7 +49,7 @@ fun appTypography(): Typography {
         ),
         subtitle1 = TextStyle(
             fontFamily = interFont,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Medium,
             fontSize = 16.sp,
             letterSpacing = 0.15.sp
         ),
@@ -73,7 +73,7 @@ fun appTypography(): Typography {
         ),
         button = TextStyle(
             fontFamily = interFont,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Medium,
             fontSize = 16.sp,
             letterSpacing = 1.25.sp,
         ),
