@@ -32,6 +32,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
@@ -67,13 +68,12 @@ import io.kamel.image.asyncPainterResource
 import kotlinproject.composeapp.generated.resources.Res
 import kotlinproject.composeapp.generated.resources.armaani
 import kotlinproject.composeapp.generated.resources.chanel
-import kotlinproject.composeapp.generated.resources.facebook
-import kotlinproject.composeapp.generated.resources.google
 import kotlinproject.composeapp.generated.resources.lv
 import kotlinproject.composeapp.generated.resources.nike
 import kotlinproject.composeapp.generated.resources.rolex
 import org.example.project.config.AppConfig
 import org.example.project.domain.model.Product
+import org.example.project.presentation.components.AddToCartButton
 import org.example.project.presentation.components.AppBarRow
 import org.example.project.presentation.components.BannerItem
 import org.example.project.presentation.components.BrandItem
@@ -218,8 +218,7 @@ fun ProductItem(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(2.dp)
-            .clickable(onClick = onClick),
+            .padding(2.dp),
         shape = RoundedCornerShape(12.dp),
         elevation = 4.dp
     ) {
@@ -263,7 +262,7 @@ fun ProductItem(
                 ) {
                     Text(
                         text = product.price.toPriceString(),
-                        style = MaterialTheme.typography.caption.copy(
+                        style = MaterialTheme.typography.body2.copy(
                             color = AppColors.textPrimary
                         ),
                         fontWeight = FontWeight.Normal
@@ -271,6 +270,15 @@ fun ProductItem(
 
                     RatingBar(rating = product.rating.rate)
                 }
+
+                /*Button(onClick = {}) {
+                    Text(text = "Add to Cart", style = appTypography().button)
+                }*/
+                Box(modifier = Modifier.fillMaxWidth().padding(top = 5.dp, start = 5.dp, end = 5.dp), contentAlignment = Alignment.Center) {
+                    AddToCartButton()
+                }
+
+
             }
         }
     }
@@ -344,9 +352,7 @@ fun OffersCarousel() {
         items = sampleItems,
         autoScrollInterval = 3000L,
         //bannerHeight = 250,
-    ) /*{ clickedItem ->
-        // Handle click
-    }*/
+    )
 }
 
 @Composable
