@@ -57,7 +57,7 @@ fun AddToCartButton() {
     Surface(
         elevation = 0.dp,
         shape = if(addedToCart) RoundedCornerShape(12.dp) else RoundedCornerShape(24.dp),
-        color = AppColors.buttonPrimary,
+        color = AppColors.primaryMuted,
         modifier = Modifier
             .width(buttonWidth)
             .height(buttonHeight)

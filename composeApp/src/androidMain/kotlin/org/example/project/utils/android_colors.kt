@@ -7,6 +7,12 @@ import androidx.compose.ui.graphics.Color
 object AppColors {
     // App Basic Colors
     val primary = Color(0xFF4b68ff)
+    val primaryLight = Color(0xFFE6ECFF)
+    val primarySoft = Color(0xFFB3C2FF)
+    val primaryMuted = Color(0xFF8098FF)
+    val primaryMuted1= Color(0xFF6580F0)
+
+    val primaryVariant = Color(0xFF4B57A2)
     val secondary = Color(0xFFFFE24B)
     val accent = Color(0xFFb0c7ff)
 

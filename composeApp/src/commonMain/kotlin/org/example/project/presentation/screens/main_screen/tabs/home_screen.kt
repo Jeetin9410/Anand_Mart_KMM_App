@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,7 +52,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -106,97 +109,109 @@ class HomeScreen : Screen, KoinComponent {
         val categories = listOf("All", "Men's Clothing", "Women's Clothing", "Electronics", "Jewelery", "Watches")
         var selectedCategory by remember { mutableStateOf(categories.first()) }
         val scrollState = rememberScrollState()
+        val focusManager = LocalFocusManager.current
 
         Scaffold(topBar = {
             AppBarRow(subText = "A-Block, 22/D, Mayapuri, Delhi....")
         }) {
-            Column(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)
-                    .verticalScroll(scrollState),
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectTapGestures(onTap = {
+                            focusManager.clearFocus()
+                        })
+                    }
             ) {
-                SearchBar(
-                    query = query,
-                    onQueryChange = { query = it },
-                    onSearch = { }
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                OffersCarousel()
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)
+                        .verticalScroll(scrollState),
                 ) {
-                    Text("Top Brands", style = appTypography().h6)
-                    Text("See more", style = appTypography().caption.copy(color = Color.DarkGray))
-                }
-                BrandsTabs(
-                    categories = listOf(
-                        BrandItem(1, "",Res.drawable.nike ),
-                        BrandItem(2, "",Res.drawable.rolex ),
-                        BrandItem(3, "",Res.drawable.lv ),
-                        BrandItem(4, "",Res.drawable.chanel ),
-                        BrandItem(5, "",Res.drawable.armaani )),
-                    onCategorySelected = { }
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Top Categories", style = appTypography().h6)
-                    Text("See more", style = appTypography().caption.copy(color = Color.DarkGray))
-                }
-                CategoryChipsTabs(
-                    categories = categories,
-                    selectedCategory = selectedCategory,
-                    onCategorySelected = { selected ->
-                        selectedCategory = selected
-                        if(selected == "All") {
-                            filteredProducts = products
-                        } else {
-                            filteredProducts = products.filter { it.category.lowercase().equals(selected.lowercase()) }
-                        }
-                    }
-                )
-                /*LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(2.dp),
-                    horizontalArrangement = Arrangement.spacedBy(2.dp),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    if (isLoading) {
-                        items(6) { ProductSkeletonLoader() }
-                    } else {
-                        items(products) { product ->
-                            ProductItem(
-                                product = product,
-                                modifier = Modifier.padding(4.dp),
-                                onClick = { }
-                            )
-                        }
-                    }
-                }*/
-                filteredProducts.chunked(2).forEach { rowItems ->
+                    SearchBar(
+                        query = query,
+                        onQueryChange = { query = it },
+                        onSearch = { }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OffersCarousel()
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        rowItems.forEach { product ->
-                            ProductItem(
-                                modifier = Modifier.weight(1f),
-                                product = product
-                            )
+                        Text("Top Brands", style = appTypography().h6)
+                        Text("See more", style = appTypography().caption.copy(color = Color.DarkGray))
+                    }
+                    BrandsTabs(
+                        categories = listOf(
+                            BrandItem(1, "",Res.drawable.nike ),
+                            BrandItem(2, "",Res.drawable.rolex ),
+                            BrandItem(3, "",Res.drawable.lv ),
+                            BrandItem(4, "",Res.drawable.chanel ),
+                            BrandItem(5, "",Res.drawable.armaani )),
+                        onCategorySelected = { }
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Top Categories", style = appTypography().h6)
+                        Text("See more", style = appTypography().caption.copy(color = Color.DarkGray))
+                    }
+                    CategoryChipsTabs(
+                        categories = categories,
+                        selectedCategory = selectedCategory,
+                        onCategorySelected = { selected ->
+                            selectedCategory = selected
+                            if(selected == "All") {
+                                filteredProducts = products
+                            } else {
+                                filteredProducts = products.filter { it.category.lowercase().equals(selected.lowercase()) }
+                            }
                         }
-                        if (rowItems.size == 1) {
-                            Spacer(Modifier.weight(1f))
+                    )
+                    /*LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(2.dp),
+                        horizontalArrangement = Arrangement.spacedBy(2.dp),
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        if (isLoading) {
+                            items(6) { ProductSkeletonLoader() }
+                        } else {
+                            items(products) { product ->
+                                ProductItem(
+                                    product = product,
+                                    modifier = Modifier.padding(4.dp),
+                                    onClick = { }
+                                )
+                            }
+                        }
+                    }*/
+                    filteredProducts.chunked(2).forEach { rowItems ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            rowItems.forEach { product ->
+                                ProductItem(
+                                    modifier = Modifier.weight(1f),
+                                    product = product
+                                )
+                            }
+                            if (rowItems.size == 1) {
+                                Spacer(Modifier.weight(1f))
+                            }
                         }
                     }
+
+
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
-
-
-                Spacer(modifier = Modifier.height(80.dp))
             }
+
         }
 
     }
