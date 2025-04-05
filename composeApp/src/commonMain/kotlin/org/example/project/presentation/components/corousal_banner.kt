@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import org.example.project.presentation.screens.main_screen.tabs.NetworkImage
+import org.example.project.theme.typography.appTypography
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -76,32 +78,29 @@ fun ParallaxCarouselBanner(
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .fillMaxWidth()
-                    .height(bannerHeight * 0.4f)
+                    .fillMaxWidth().wrapContentHeight()
                     .background(
                         brush = Brush.verticalGradient(
                             colors = listOf(
                                 Color.Transparent,
-                                Color.Black.copy(alpha = 0.7f)
+                                Color.Black.copy(alpha = 0.8f)
                             ),
                             startY = 0f
                         )
                     )
-                    .padding(16.dp)
+                    .padding(start = 16.dp,bottom = 5.dp)
             ) {
                 Column {
                     Text(
                         text = item.title,
-                        style = MaterialTheme.typography.h6,
+                        style = appTypography().subtitle2,
                         color = Color.White
                     )
-                    item.subtitle?.let {
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.body2,
-                            color = Color.White.copy(alpha = 0.9f)
-                        )
-                    }
+                    Text(
+                        text = item.subtitle,
+                        style = appTypography().subtitle1,
+                        color = Color.White
+                    )
                 }
             }
         }
@@ -112,6 +111,6 @@ fun ParallaxCarouselBanner(
 data class BannerItem(
     val imageRes: String, // Use "filename.png" for resources
     val title: String,
-    val subtitle: String? = null
+    val subtitle: String
 )
 
