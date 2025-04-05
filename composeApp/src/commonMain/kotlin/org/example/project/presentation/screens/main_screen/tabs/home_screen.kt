@@ -100,9 +100,10 @@ class HomeScreen : Screen, KoinComponent {
         val productViewModel = koinViewModel<ProductViewModel>()
         val appConfig: AppConfig = get()
         val products by productViewModel.products.collectAsState()
+        var filteredProducts = products
         val isLoading by productViewModel.isLoading.collectAsState()
         var query by remember { mutableStateOf("") }
-        val categories = listOf("Men's Clothing", "Women's Clothing", "Electronics", "Shoes", "Watches")
+        val categories = listOf("All", "Men's Clothing", "Women's Clothing", "Electronics", "Jewelery", "Watches")
         var selectedCategory by remember { mutableStateOf(categories.first()) }
         val scrollState = rememberScrollState()
 
@@ -148,7 +149,14 @@ class HomeScreen : Screen, KoinComponent {
                 CategoryChipsTabs(
                     categories = categories,
                     selectedCategory = selectedCategory,
-                    onCategorySelected = { selectedCategory = it }
+                    onCategorySelected = { selected ->
+                        selectedCategory = selected
+                        if(selected == "All") {
+                            filteredProducts = products
+                        } else {
+                            filteredProducts = products.filter { it.category.lowercase().equals(selected.lowercase()) }
+                        }
+                    }
                 )
                 /*LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
@@ -169,7 +177,7 @@ class HomeScreen : Screen, KoinComponent {
                         }
                     }
                 }*/
-                products.chunked(2).forEach { rowItems ->
+                filteredProducts.chunked(2).forEach { rowItems ->
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
