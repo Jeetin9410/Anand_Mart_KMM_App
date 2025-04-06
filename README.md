@@ -36,8 +36,9 @@ A cutting-edge **Kotlin Multiplatform** project demonstrating a shared **Jetpack
 - **Offline-first** capability
 
 ---
-
-<div align="center">
-  <img src="https://github.com/Jeetin9410/Anand_Mart_KMM_App/blob/master/rec/demo_ios.gif" width="400" />
+<div align="center" style="display: flex; justify-content: center; gap: 100px;">
+  <img src="https://github.com/Jeetin9410/Anand_Mart_KMM_App/blob/master/rec/demo_ios.gif?raw=true" width="400" />
+  <img src="https://github.com/Jeetin9410/Anand_Mart_KMM_App/blob/master/rec/demo_android.gif?raw=true" width="400" />
 </div>
+
 
