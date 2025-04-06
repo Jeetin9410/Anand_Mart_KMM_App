@@ -36,6 +36,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -85,6 +86,9 @@ import org.example.project.presentation.components.CategoryChipsTabs
 import org.example.project.presentation.components.ParallaxCarouselBanner
 import org.example.project.presentation.components.SearchBar
 import org.example.project.presentation.screens.login.LoginScreen
+import org.example.project.presentation.screens.product_details_screen.ProductDetails
+import org.example.project.presentation.screens.product_details_screen.ProductDetailsScreen
+import org.example.project.presentation.screens.product_details_screen.ProductNew
 import org.example.project.presentation.viewmodel.ProductViewModel
 import org.example.project.theme.colors.AppColors
 import org.example.project.theme.typography.appTypography
@@ -139,7 +143,7 @@ class HomeScreen : Screen, KoinComponent {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Top Brands", style = appTypography().h6)
+                        Text("Top Brands", style = appTypography().subtitle1, fontWeight = FontWeight.Bold)
                         Text("See more", style = appTypography().caption.copy(color = Color.DarkGray))
                     }
                     BrandsTabs(
@@ -156,7 +160,7 @@ class HomeScreen : Screen, KoinComponent {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Top Categories", style = appTypography().h6)
+                        Text("Top Categories", style = appTypography().subtitle1, fontWeight = FontWeight.Bold)
                         Text("See more", style = appTypography().caption.copy(color = Color.DarkGray))
                     }
                     CategoryChipsTabs(
@@ -199,7 +203,35 @@ class HomeScreen : Screen, KoinComponent {
                                 ProductItem(
                                     modifier = Modifier.weight(1f),
                                     product = product
-                                )
+                                ) {
+                                    navigator.push(ProductDetails(ProductNew(
+                                        title = product.title,
+                                        priceBySize = mapOf(
+                                            "S" to product.price,
+                                            "M" to product.price.plus(10),
+                                            "L" to product.price.plus(20),
+                                            "XL" to product.price.plus(30)
+                                        ),
+                                        originalPrice = product.price.times(2),
+                                        rating = product.rating.rate,
+                                        description = product.description,
+                                        images = listOf(
+                                            product.image,
+                                            product.image,
+                                            product.image,
+                                            product.image,
+                                        ),
+                                        sizes = listOf("S", "M", "L", "XL"),
+                                        colors = listOf(0xFF80DEEA, 0xFFCFD8DC, 0xFFD32F2F, 0xFFF8BBD0),
+                                        specs = mapOf(
+                                            "Closure" to "Button",
+                                            "Collar" to "Notched Lapel",
+                                            "Fabric" to "Linen",
+                                            "Length" to "Longline",
+                                            "Lining Fabric" to "Unlined"
+                                        )
+                                    )))
+                                }
                             }
                             if (rowItems.size == 1) {
                                 Spacer(Modifier.weight(1f))
@@ -232,6 +264,7 @@ fun NetworkImage(url: String, modifier: Modifier, contentScale: ContentScale = C
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProductItem(
     product: Product,
@@ -243,7 +276,8 @@ fun ProductItem(
             .fillMaxWidth()
             .padding(2.dp),
         shape = RoundedCornerShape(12.dp),
-        elevation = 4.dp
+        elevation = 4.dp,
+        onClick = {onClick.invoke()}
     ) {
         Column {
 

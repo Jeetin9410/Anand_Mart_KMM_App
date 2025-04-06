@@ -89,6 +89,7 @@ kotlin {
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.coroutines)
 
+            implementation(libs.realm.library.base)
         }
 
         iosMain.dependencies {

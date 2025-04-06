@@ -122,7 +122,7 @@ fun CategoryChipsTabs(
                 Text(
                     text = category,
                     color = if (isSelected) Color.White else Color.Black,
-                    style = appTypography().overline,
+                    style = appTypography().caption,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                 )
             }
