@@ -9,7 +9,7 @@ A cutting-edge **Kotlin Multiplatform** project demonstrating a shared **Jetpack
 [![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-1.5.10-red.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-▶️ [Android Demo](#) | ▶️ [iOS Demo](#)
+▶️ [Android Demo](#) | ▶️ [iOS Demo](https://github.com/Jeetin9410/Anand_Mart_KMM_App/blob/master/rec/demo_ios.gif)
 [Yet to upload, project under development]
 </div>
 
@@ -18,7 +18,7 @@ A cutting-edge **Kotlin Multiplatform** project demonstrating a shared **Jetpack
 ## 🛠 Tech Stack & Libraries  
 
 | Category          | Libraries/Tools                                                                                     |
-|-------------------|----------------------------------------------------------------------------------------------------|
+|-------------------|---------------------------------------------------------------------------------------------------------|
 | **Dependency Injection**  | [![Koin](https://img.shields.io/badge/Koin-✓-blue?logo=kotlin)](https://insert-koin.io/)          |
 | **Navigation**           | [![Voyager](https://img.shields.io/badge/Voyager-✓-orange)](https://voyager.adriel.cafe/)         |
 | **Networking**           | [![Ktor](https://img.shields.io/badge/Ktor-✓-success)](https://ktor.io/)                          |
@@ -36,4 +36,8 @@ A cutting-edge **Kotlin Multiplatform** project demonstrating a shared **Jetpack
 - **Offline-first** capability
 
 ---
+
+<div align="center">
+  <img src="https://github.com/Jeetin9410/Anand_Mart_KMM_App/blob/master/rec/demo_ios.gif" width="400" />
+</div>
 
