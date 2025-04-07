@@ -7,7 +7,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    kotlin("plugin.serialization")
+    alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.realmPlugin)
 }
 
 kotlin {
@@ -36,6 +37,7 @@ kotlin {
         
         androidMain.dependencies {
             implementation(compose.preview)
+            implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.ktor.client.android)
@@ -65,7 +67,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.kotlinx.coroutines.core)
 
-            implementation(libs.kotlinx.serialization.json)
+            //implementation(libs.kotlinx.serialization.json)
 
             implementation("media.kamel:kamel-image:0.7.1")
 
@@ -90,6 +92,7 @@ kotlin {
             implementation(libs.multiplatform.settings.coroutines)
 
             implementation(libs.realm.library.base)
+            //implementation("com.benasher44:uuid:0.7.0")
         }
 
         iosMain.dependencies {

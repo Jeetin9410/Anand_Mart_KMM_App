@@ -45,6 +45,8 @@ import kotlinproject.composeapp.generated.resources.facebook
 import kotlinproject.composeapp.generated.resources.google
 import kotlinx.coroutines.launch
 import org.example.project.config.AppConfig
+import org.example.project.data.database.AppDatabase.realm
+import org.example.project.data.db_models.User
 import org.example.project.domain.model.UsersModel
 import org.example.project.presentation.screens.main_screen.MainScreen
 import org.example.project.theme.colors.AppColors
@@ -77,6 +79,13 @@ class LoginScreen : Screen, KoinComponent {
                 Spacer(modifier = Modifier.height(50.dp))
                 LoginScreenUi { (email, password) ->
                     coroutineScope.launch {
+
+                        realm.write { // this : MutableRealm
+                            val managedPerson = copyToRealm(User().apply {
+                                id = "agrsg"
+                                name = "Jeetin"
+                            })
+                        }
                         val users = loginViewModel.fetchAllUsers() // Wait for result
 
                         val matchedUsers = users.filter { it.email == email && it.password == password }

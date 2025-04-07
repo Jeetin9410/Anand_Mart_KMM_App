@@ -1,33 +1,38 @@
 [versions]
-agp = "8.5.2"
+agp = "8.2.2"
 alertKmp = "2.0.0"
 android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "35"
-androidx-activityCompose = "1.10.1"
+androidx-activityCompose = "1.9.0"
 androidx-appcompat = "1.7.0"
-androidx-constraintlayout = "2.2.1"
-androidx-core-ktx = "1.15.0"
-androidx-espresso-core = "3.6.1"
-androidx-lifecycle = "2.8.4"
+androidx-constraintlayout = "2.1.4"
+androidx-core-ktx = "1.13.1"
+androidx-espresso-core = "3.6.0"
+androidx-lifecycle = "2.8.0"
 androidx-material = "1.12.0"
-androidx-test-junit = "1.2.1"
-compose-multiplatform = "1.7.3"
+androidx-test-junit = "1.2.0"
+compose-multiplatform = "1.6.11"
 junit = "4.13.2"
 koinAndroid = "3.5.0"
-koinCore = "4.0.0"
+koinCore = "3.5.3"
+koinCore1 = "4.0.0"
 
-kotlin = "2.1.10"
-kotlinx-coroutines = "1.10.1"
+kotlin = "2.0.0"
+kotlinx-coroutines = "1.7.3"
 kotlinxSerializationJson = "1.6.2"
-ktorClientDarwin = "2.3.8"
+ktorClientDarwin = "2.3.7"
 ktorClientLogging = "2.3.8"
-libraryBase = "1.11.0"
+realmlibraryBase = "2.0.0"
+realmPlugin = "2.0.0"
 multiplatformSettingsCoroutines = "1.1.1"
 voyagerNavigator = "1.0.0"
 uiGraphicsAndroid = "1.7.8"
 composeIcons = "1.1.1"
 preferenceKtx = "1.2.1"
+lifecycleViewmodelCompose = "2.7.0"
+# material3 = "1.2.0"
+dateTimeVersion = "0.6.0"
 
 [libraries]
 alert-kmp = { module = "io.github.khubaibkhan4:alert-kmp", version.ref = "alertKmp" }
@@ -45,7 +50,8 @@ androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", nam
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+# kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "dateTimeVersion" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorClientDarwin" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorClientDarwin" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorClientDarwin" }
@@ -54,13 +60,17 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktorClientLogging" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClientDarwin" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorClientDarwin" }
-realm-library-base = { module = "io.realm.kotlin:library-base", version.ref = "libraryBase" }
+
+realm-library-base = { module = "io.realm.kotlin:library-base", version.ref = "realmlibraryBase" }
+
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettingsCoroutines" }
 multiplatform-settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformSettingsCoroutines" }
+
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyagerNavigator" }
 voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyagerNavigator" }
 voyager-tab-navigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyagerNavigator" }
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyagerNavigator" }
+
 androidx-ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "uiGraphicsAndroid" }
 
 composeIcons-cssGg = { module = "br.com.devsrsouza.compose.icons:css-gg", version.ref = "composeIcons" }
@@ -74,11 +84,11 @@ composeIcons-octicons = { module = "br.com.devsrsouza.compose.icons:octicons", v
 composeIcons-simpleIcons = { module = "br.com.devsrsouza.compose.icons:simple-icons", version.ref = "composeIcons" }
 composeIcons-tablerIcons = { module = "br.com.devsrsouza.compose.icons:tabler-icons", version.ref = "composeIcons" }
 
-koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinCore" }
-koin-core = { module = "io.insert-koin:koin-core", version.ref = "koinCore" }
-koin-androidx-compose = {module = "io.insert-koin:koin-androidx-compose", version.ref = 'koinCore'}
-koin-compose = {module = "io.insert-koin:koin-compose", version.ref = 'koinCore'}
-koin-compose-viewmodel = {module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koinCore"}
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinCore1" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koinCore1" }
+koin-androidx-compose = {module = "io.insert-koin:koin-androidx-compose", version.ref = 'koinCore1'}
+koin-compose = {module = "io.insert-koin:koin-compose", version.ref = 'koinCore1'}
+koin-compose-viewmodel = {module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koinCore1"}
 
 androidx-preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preferenceKtx" }
 
@@ -88,3 +98,5 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+realmPlugin = {id = "io.realm.kotlin", version.ref = "realmPlugin"}

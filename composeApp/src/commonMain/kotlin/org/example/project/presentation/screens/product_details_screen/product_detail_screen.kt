@@ -76,6 +76,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import compose.icons.AllIcons
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Brands
+import compose.icons.fontawesomeicons.Solid
+import compose.icons.fontawesomeicons.solid.StepBackward
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import kotlinproject.composeapp.generated.resources.Res
@@ -135,7 +137,7 @@ fun ProductDetailsScreen(
                     .zIndex(1f) // Bring above content
             ) {
                 IconButton(onClick = { navigator.pop() }, modifier = Modifier.padding(8.dp)) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.Black)
+                    Icon(FontAwesomeIcons.Solid.StepBackward, contentDescription = "Back", tint = Color.Black)
                 }
             }
         },
