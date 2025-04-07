@@ -6,6 +6,7 @@ import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.darwin.Darwin
 import org.example.project.config.provideIOSSettings
 import org.example.project.config.provideIOSUserDefaults
+import org.example.project.utils.DatabaseDriverFactory
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import platform.Foundation.NSURLSessionConfiguration
@@ -15,4 +16,5 @@ actual val platformModule: Module
     get() = module {
         single<NSUserDefaults> { provideIOSUserDefaults() } // Provide NSUserDefaults
         single<Settings> { provideIOSSettings(get()) }
+        single<DatabaseDriverFactory> { DatabaseDriverFactory() }
     }
