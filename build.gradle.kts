@@ -4,8 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("app.cash.sqldelight:gradle-plugin:2.0.2") // Add this line
-        // Keep your other classpaths
+        classpath("app.cash.sqldelight:gradle-plugin:2.0.2")
     }
 }
 
@@ -21,14 +20,3 @@ plugins {
     alias(libs.plugins.sqldelight) apply false
 
 }
-
-/*
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath("app.cash.sqldelight:gradle-plugin:2.0.2")
-    }
-}*/
