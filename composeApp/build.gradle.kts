@@ -2,22 +2,20 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization)
-
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
-    androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-        }
-    }
+    androidTarget()
+
+    jvmToolchain(17)
     
     listOf(
         iosX64(),
@@ -44,6 +42,7 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
             implementation(libs.androidx.preference.ktx)
+            implementation("app.cash.sqldelight:android-driver:2.0.2")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -92,16 +91,20 @@ kotlin {
             implementation(libs.multiplatform.settings.coroutines)
 
             implementation(libs.realm.library.base)
+            implementation("app.cash.sqldelight:runtime:2.0.2")
+            implementation("app.cash.sqldelight:coroutines-extensions:2.0.2")
         }
 
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin) // ✅ iOS-specific HTTP engine
+            implementation("app.cash.sqldelight:native-driver:2.0.2")
         }
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.cio)
+            implementation("app.cash.sqldelight:sqlite-driver:2.0.2")
         }
     }
 }
@@ -110,6 +113,15 @@ repositories {
     google()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+}
+
+sqldelight {
+    databases {
+        create("AnandMartDb") {
+            packageName.set("com.example.project")
+            srcDirs.from("sqldelight")
+        }
+    }
 }
 
 android {

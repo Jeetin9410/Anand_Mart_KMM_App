@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.project.AnandMartDb
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Eye
 import compose.icons.tablericons.EyeOff
@@ -43,6 +44,8 @@ import kotlinproject.composeapp.generated.resources.Res
 import kotlinproject.composeapp.generated.resources.apple
 import kotlinproject.composeapp.generated.resources.facebook
 import kotlinproject.composeapp.generated.resources.google
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.example.project.config.AppConfig
 import org.example.project.domain.model.UsersModel
@@ -54,6 +57,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.mp.KoinPlatform
+import org.koin.mp.KoinPlatform.getKoin
 
 class LoginScreen : Screen, KoinComponent {
 
@@ -70,6 +75,7 @@ class LoginScreen : Screen, KoinComponent {
         val appConfig: AppConfig = get()
         val isLoading by loginViewModel.isLoading.collectAsState(false)
         val coroutineScope = rememberCoroutineScope()
+        val db = KoinPlatform.getKoin().get<AnandMartDb>()
 
 
         LoadingOverlay(isLoading = isLoading) {
@@ -77,6 +83,8 @@ class LoginScreen : Screen, KoinComponent {
                 Spacer(modifier = Modifier.height(50.dp))
                 LoginScreenUi { (email, password) ->
                     coroutineScope.launch {
+                        writeTestData(db)
+
                         val users = loginViewModel.fetchAllUsers() // Wait for result
 
                         val matchedUsers = users.filter { it.email == email && it.password == password }
@@ -238,5 +246,27 @@ fun SocialLoginButton(iconRes: Painter) {
         contentAlignment = Alignment.Center
     ) {
         Image(painter = iconRes, contentDescription = "Social login icon",  modifier = Modifier.size(30.dp), )
+    }
+}
+
+fun writeTestData(db: AnandMartDb) {
+    CoroutineScope(Dispatchers.Default).launch {
+        try {
+            db.transaction {
+                db.userQueries.insertUser(
+                    id = "test_",
+                    username = "test_user",
+                    email = "test@example.com",
+                    password_hash = "hashed123",
+                    created_at = 1234L,
+                    updated_at = 23455L
+                )
+            }
+            //message = "Test user added successfully!"
+            println("inserted i guess")
+        } catch (e: Exception) {
+            //message = "Error: ${e.message}"
+            println("Error in insert: ${e.message}")
+        }
     }
 }
