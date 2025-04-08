@@ -28,7 +28,11 @@ kotlin {
         }
     }
     
-    jvm("desktop")
+    jvm("desktop") {
+        compilations.all {
+            kotlinOptions.jvmTarget = "17"
+        }
+    }
     
     sourceSets {
         val desktopMain by getting
@@ -108,6 +112,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.cio)
             implementation("app.cash.sqldelight:sqlite-driver:2.0.2")
+            implementation("com.russhwolf:multiplatform-settings:1.1.1")
         }
     }
 }
