@@ -89,6 +89,7 @@ kotlin {
 
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.coroutines)
+            implementation(libs.multiplatform.settings.serialization)
 
             implementation(libs.realm.library.base)
             implementation("app.cash.sqldelight:runtime:2.0.2")

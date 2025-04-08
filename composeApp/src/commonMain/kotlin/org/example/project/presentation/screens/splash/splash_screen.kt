@@ -32,6 +32,7 @@ import org.example.project.config.AppConfig
 import org.example.project.presentation.screens.main_screen.MainScreen
 import org.example.project.presentation.screens.login.LoginScreen
 import org.example.project.theme.typography.appTypography
+import org.example.project.utils.AppConstants
 import org.jetbrains.compose.resources.painterResource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -49,7 +50,7 @@ class SplashScreen : Screen, KoinComponent {
         LaunchedEffect(Unit) {
             visible = true
             delay(3000) // 3-second splash delay
-            if(appConfig.getBoolean(LoginScreen.ARG_IS_LOGGED_IN)){
+            if(appConfig.getBoolean(AppConstants.ARG_IS_LOGGED_IN)){
                 navigator.replace(MainScreen())
             } else {
                 navigator.replace(LoginScreen())

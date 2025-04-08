@@ -21,7 +21,20 @@ data class UsersModel(
     val username: String,
     @SerialName("__v")
     val v: Int
-)
+) {
+    companion object {
+        fun empty() = UsersModel(
+            address = Address.empty(),
+            email = "",
+            id = 0,
+            name = Name.empty(),
+            password = "",
+            phone = "",
+            username = "",
+            v = 0
+        )
+    }
+}
 
 @Serializable
 data class Address(
@@ -35,7 +48,17 @@ data class Address(
     val street: String,
     @SerialName("zipcode")
     val zipcode: String
-)
+) {
+    companion object {
+        fun empty() = Address(
+            city = "",
+            geolocation = Geolocation.empty(),
+            number = 0,
+            street = "",
+            zipcode = ""
+            )
+    }
+}
 
 @Serializable
 data class Name(
@@ -43,7 +66,14 @@ data class Name(
     val firstname: String,
     @SerialName("lastname")
     val lastname: String
-)
+) {
+    companion object {
+        fun empty() = Name(
+            firstname = "Test",
+            lastname = "User"
+        )
+    }
+}
 
 @Serializable
 data class Geolocation(
@@ -51,4 +81,11 @@ data class Geolocation(
     val lat: String,
     @SerialName("long")
     val long: String
-)
+) {
+    companion object {
+        fun empty() = Geolocation(
+            lat = "0.0",
+            long = "0.0"
+        )
+    }
+}

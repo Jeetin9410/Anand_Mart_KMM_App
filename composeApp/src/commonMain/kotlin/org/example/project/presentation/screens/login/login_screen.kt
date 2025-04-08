@@ -52,6 +52,7 @@ import org.example.project.domain.model.UsersModel
 import org.example.project.presentation.screens.main_screen.MainScreen
 import org.example.project.theme.colors.AppColors
 import org.example.project.theme.typography.appTypography
+import org.example.project.utils.AppConstants
 import org.example.project.utils.LoadingOverlay
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -63,9 +64,7 @@ import org.koin.mp.KoinPlatform.getKoin
 class LoginScreen : Screen, KoinComponent {
 
     companion object {
-        const val ARG_IS_LOGGED_IN = "arg_is_logged_in"
-        const val ARG_EMAIL = "email"
-        const val ARG_PASSWORD = "password"
+
     }
 
     @Composable
@@ -83,18 +82,17 @@ class LoginScreen : Screen, KoinComponent {
                 Spacer(modifier = Modifier.height(50.dp))
                 LoginScreenUi { (email, password) ->
                     coroutineScope.launch {
-                        writeTestData(db)
+                        //writeTestData(db)
 
                         val users = loginViewModel.fetchAllUsers() // Wait for result
 
-                        val matchedUsers = users.filter { it.email == email && it.password == password }
-                        if (matchedUsers.isEmpty()) {
+                        val matchedUsers = users.find { it.email == email && it.password == password }
+                        if (matchedUsers == null) {
                             val notification = createNotification(NotificationType.TOAST)
                             notification.show("Incorrect email or password!")
                         } else {
-                            appConfig.putBoolean(ARG_IS_LOGGED_IN, true)
-                            appConfig.putString(ARG_EMAIL, email)
-                            appConfig.putString(ARG_PASSWORD, password)
+                            appConfig.putBoolean(AppConstants.ARG_IS_LOGGED_IN, true)
+                            appConfig.putObject(AppConstants.ARG_USER_DETAILS, matchedUsers , UsersModel.serializer())
                             navigator.replace(MainScreen())
                         }
                     }
@@ -249,6 +247,7 @@ fun SocialLoginButton(iconRes: Painter) {
     }
 }
 
+/*
 fun writeTestData(db: AnandMartDb) {
     CoroutineScope(Dispatchers.Default).launch {
         try {
@@ -269,4 +268,4 @@ fun writeTestData(db: AnandMartDb) {
             println("Error in insert: ${e.message}")
         }
     }
-}
+}*/

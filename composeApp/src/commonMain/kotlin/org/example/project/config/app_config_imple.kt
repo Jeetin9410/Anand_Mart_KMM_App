@@ -1,10 +1,14 @@
 package org.example.project.config
 
 
+import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
+import com.russhwolf.settings.serialization.decodeValueOrNull
+import com.russhwolf.settings.serialization.encodeValue
+import com.russhwolf.settings.serialization.removeValue
 import com.russhwolf.settings.set
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 
 class AppConfigImpl(private val settings: Settings) : AppConfig {
@@ -30,17 +34,20 @@ class AppConfigImpl(private val settings: Settings) : AppConfig {
         settings[key] = value
     }
 
-    /*override fun <T> getObject(key: String, defaultValue: T, serializer: KSerializer<T>): T {
-        val jsonString = settings.get<String>(key, "")
-        return if (jsonString.isNotEmpty()) {
-            Json.decodeFromString(serializer, jsonString)
-        } else {
-            defaultValue
-        }
+    @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
+    override fun <T> getObject(key: String, serializer: KSerializer<T>): T? =
+        settings.decodeValueOrNull(serializer, key)
+
+    @OptIn(ExperimentalSerializationApi::class, ExperimentalSettingsApi::class)
+    override fun <T> putObject(key: String, value: T, serializer: KSerializer<T>) {
+        settings.encodeValue(serializer, key, value)
     }
 
-    override fun <T> putObject(key: String, value: T, serializer: KSerializer<T>) {
-        val jsonString = Json.encodeToString(serializer, value)
-        settings[key] = jsonString
-    }*/
+    override fun remove(key: String) {
+        settings.remove(key)
+    }
+
+    fun <T> removeObject(key: String, serializer: KSerializer<T>) {
+        settings.removeValue(serializer, key)
+    }
 }

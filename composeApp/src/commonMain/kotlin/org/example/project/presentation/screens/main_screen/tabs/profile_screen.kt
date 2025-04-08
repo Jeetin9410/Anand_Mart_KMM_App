@@ -24,17 +24,25 @@ import com.example.project.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.example.project.config.AppConfig
+import org.example.project.domain.model.UsersModel
 import org.example.project.theme.typography.appTypography
-import org.koin.mp.KoinPlatform.getKoin
+import org.example.project.utils.AppConstants
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
-class ProfileScreen : Screen {
+class ProfileScreen : Screen, KoinComponent {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val db = getKoin().get<AnandMartDb>()
-        var users by remember { mutableStateOf<List<User>>(emptyList()) }
+        val appConfig: AppConfig = get()
+        // var users by remember { mutableStateOf<List<User>>(emptyList()) }
 
-        CoroutineScope(Dispatchers.Default).launch {
+        val profileWithDefault = appConfig.getObject(AppConstants.ARG_USER_DETAILS, UsersModel.serializer())
+            ?: UsersModel.empty()
+
+        /*CoroutineScope(Dispatchers.Default).launch {
             users = db.userQueries.selectAllUsers()
                 .executeAsList()
                 .map {
@@ -47,23 +55,11 @@ class ProfileScreen : Screen {
                         updated_at = it.updated_at
                     )
                 }
-        }
+        }*/
 
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Profile Screen", style = appTypography().h4)
-            LazyColumn {
-                items(users) { user ->
-                    Card(modifier = Modifier.padding(8.dp)) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text("ID: ${user}")
-                            Text("Username: ${user}")
-                            Text("Email: ${user}")
-                            Text("Created:}")
-                        }
-                    }
-                }
-            }
-
+            Text("UserDetails ${profileWithDefault.id} ${profileWithDefault.username} ${profileWithDefault.email} ${profileWithDefault.name} ${profileWithDefault.phone} ${profileWithDefault.address.city}", style = appTypography().subtitle2)
             Button(onClick = { navigator.pop() }) {
                 Text("Go Back")
             }
