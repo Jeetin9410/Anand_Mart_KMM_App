@@ -10,7 +10,7 @@ A cutting-edge **Kotlin Multiplatform** project demonstrating a shared **Jetpack
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ▶️ [Android Demo](#) | ▶️ [iOS Demo](https://github.com/Jeetin9410/Anand_Mart_KMM_App/blob/master/rec/demo_ios.gif)
-[Yet to upload, project under development]
+[Scroll till the end]
 </div>
 
 ---
