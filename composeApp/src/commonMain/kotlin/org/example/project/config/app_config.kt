@@ -16,4 +16,8 @@ interface AppConfig {
     fun <T> putObject(key: String, value: T, serializer: KSerializer<T>)
 
     fun remove(key: String)
+
+    fun <T> removeObject(key: String, serializer: KSerializer<T>)
+
+    fun clearAllData()
 }

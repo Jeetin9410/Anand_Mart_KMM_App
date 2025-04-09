@@ -61,7 +61,7 @@ fun ProfileImageWithEditIcon(imageUrl: String, onClick: () -> Unit) {
         NetworkImage(
             url = imageUrl,
             modifier = Modifier
-                .size(120.dp)
+                .size(100.dp)
                 .clip(CircleShape)
                 .border(2.dp, Color.LightGray, CircleShape)
         )
@@ -88,9 +88,9 @@ fun ProfileActionButton(text: String, onClick: () -> Unit) {
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(backgroundColor = AppColors.primary),
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.padding(vertical = 8.dp)
+        modifier = Modifier.padding(vertical = 4.dp)
     ) {
-        Text(text = text, color = Color.White, style = appTypography().subtitle2)
+        Text(text = text, color = Color.White, style = appTypography().button)
     }
 }
 
@@ -117,7 +117,7 @@ fun ProfileListItem(
         ) {
             Icon(icon, contentDescription = null, tint = iconTint)
             Spacer(modifier = Modifier.width(16.dp))
-            Text(label, modifier = Modifier.weight(1f),style = appTypography().subtitle2)
+            Text(label, modifier = Modifier.weight(1f),style = appTypography().subtitle2.copy(fontWeight = FontWeight.Normal))
             Icon(trailingIcon, contentDescription = null, tint = Color.Gray)
         }
     }

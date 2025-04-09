@@ -47,7 +47,11 @@ class AppConfigImpl(private val settings: Settings) : AppConfig {
         settings.remove(key)
     }
 
-    fun <T> removeObject(key: String, serializer: KSerializer<T>) {
+    override fun <T> removeObject(key: String, serializer: KSerializer<T>) {
         settings.removeValue(serializer, key)
+    }
+
+    override fun clearAllData() {
+        settings.clear()
     }
 }

@@ -40,7 +40,7 @@ fun ProfileScreenUi(
             ProfileImageWithEditIcon(profileImage, onClick = { /* open image picker */ })
             Spacer(modifier = Modifier.width(16.dp))
             Column {
-                Text(userName, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                Text(userName, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 Text(email, color = Color.Gray)
                 ProfileActionButton("Edit Profile", onClick = onEditClick)
             }

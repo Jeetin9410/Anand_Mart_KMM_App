@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
@@ -31,13 +33,16 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.project.AnandMartDb
 import com.example.project.User
+import createNotification
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.example.project.config.AppConfig
 import org.example.project.domain.model.UsersModel
+import org.example.project.presentation.components.showDialogPopUp
 import org.example.project.presentation.screens.profile_screen.ProfileEditScreen
 import org.example.project.presentation.screens.profile_screen.ProfileScreenUi
+import org.example.project.presentation.screens.splash.SplashScreen
 import org.example.project.theme.typography.appTypography
 import org.example.project.utils.AppConstants
 import org.koin.core.component.KoinComponent
@@ -49,11 +54,25 @@ class ProfileScreen : Screen, KoinComponent {
         val navigator = LocalNavigator.currentOrThrow
         val db = getKoin().get<AnandMartDb>()
         val appConfig: AppConfig = get()
-
+        var showDialog by remember { mutableStateOf(false) }
 
         val profileWithDefault =
             appConfig.getObject(AppConstants.ARG_USER_DETAILS, UsersModel.serializer())
                 ?: UsersModel.empty()
+
+
+        if (showDialog) {
+            showDialogPopUp(
+                title = "Logout",
+                message = "Are you sure you want to logout?",
+                onConfirm = {
+                    showDialog = false
+                    /*appConfig.clearAllData()
+                    navigator.replace(SplashScreen())*/
+                },
+                onDismiss = { showDialog = false }
+            )
+        }
 
         Scaffold(
             topBar = {
@@ -86,7 +105,38 @@ class ProfileScreen : Screen, KoinComponent {
                     )
                 },
                 onItemClicked = { item ->
+                    when (item) {
+                        "Favourites" -> {
+                            // Handle favourites item click
+                        }
+                        "Downloads" -> {
+                            // Handle downloads item click
+                        }
+                        "Language" -> {
+                            // Handle language item click
+                        }
+                        "Location" -> {
+                            // Handle location item click
+                        }
+                        "Subscription" -> {
+                            // Handle subscription item click
+                        }
+                        "Clear cache" -> {
+                            // Handle clear cache item click
+                        }
+                        "Clear history" -> {
+                            // Handle clear history item click
+                        }
+                        "Log out" -> {
+                            showDialog = true
 
+                            /*appConfig.clearAllData()
+                            navigator.replace(SplashScreen())*/
+                        }
+                        else -> {
+
+                        }
+                    }
                 }
             )
         }
