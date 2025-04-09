@@ -94,6 +94,8 @@ kotlin {
             implementation(libs.realm.library.base)
             implementation("app.cash.sqldelight:runtime:2.0.2")
             implementation("app.cash.sqldelight:coroutines-extensions:2.0.2")
+            implementation("com.benasher44:uuid:0.8.4")
+            implementation(libs.kotlinx.datetime)
         }
 
         iosMain.dependencies {

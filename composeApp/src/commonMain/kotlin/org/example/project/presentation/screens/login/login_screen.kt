@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.benasher44.uuid.uuid4
 import com.example.project.AnandMartDb
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Eye
@@ -47,6 +48,7 @@ import kotlinproject.composeapp.generated.resources.google
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import org.example.project.config.AppConfig
 import org.example.project.domain.model.UsersModel
 import org.example.project.presentation.screens.main_screen.MainScreen
@@ -60,6 +62,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.mp.KoinPlatform
 import org.koin.mp.KoinPlatform.getKoin
+
 
 class LoginScreen : Screen, KoinComponent {
 
@@ -82,8 +85,6 @@ class LoginScreen : Screen, KoinComponent {
                 Spacer(modifier = Modifier.height(50.dp))
                 LoginScreenUi { (email, password) ->
                     coroutineScope.launch {
-                        //writeTestData(db)
-
                         val users = loginViewModel.fetchAllUsers() // Wait for result
 
                         val matchedUsers = users.find { it.email == email && it.password == password }
@@ -93,6 +94,7 @@ class LoginScreen : Screen, KoinComponent {
                         } else {
                             appConfig.putBoolean(AppConstants.ARG_IS_LOGGED_IN, true)
                             appConfig.putObject(AppConstants.ARG_USER_DETAILS, matchedUsers , UsersModel.serializer())
+                            startSession(db)
                             navigator.replace(MainScreen())
                         }
                     }
@@ -247,25 +249,19 @@ fun SocialLoginButton(iconRes: Painter) {
     }
 }
 
-/*
-fun writeTestData(db: AnandMartDb) {
+fun startSession(db: AnandMartDb) {
     CoroutineScope(Dispatchers.Default).launch {
         try {
             db.transaction {
-                db.userQueries.insertUser(
-                    id = "test_",
-                    username = "test_user",
-                    email = "test@example.com",
-                    password_hash = "hashed123",
-                    created_at = 1234L,
-                    updated_at = 23455L
+                db.sessionQueries.insertSession(
+                    id = uuid4().toString(),
+                    created_at = Clock.System.now().toEpochMilliseconds(),
+                    is_active = true
                 )
             }
-            //message = "Test user added successfully!"
-            println("inserted i guess")
+            println("session created")
         } catch (e: Exception) {
-            //message = "Error: ${e.message}"
-            println("Error in insert: ${e.message}")
+            println("Error in inserting Session: ${e.message}")
         }
     }
-}*/
+}

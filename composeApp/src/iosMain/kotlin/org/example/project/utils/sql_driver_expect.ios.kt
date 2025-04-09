@@ -6,9 +6,11 @@ import com.example.project.AnandMartDb
 
 actual class DatabaseDriverFactory {
     actual fun createDriver(): SqlDriver {
-        return NativeSqliteDriver(
+        val driver: SqlDriver = NativeSqliteDriver(
             schema = AnandMartDb.Schema,
-            name = "AnandMartDb.db"
+            name = "AnandMartDb.db",
         )
+        driver.execute(null, "PRAGMA foreign_keys=ON;", 0)
+        return driver
     }
 }

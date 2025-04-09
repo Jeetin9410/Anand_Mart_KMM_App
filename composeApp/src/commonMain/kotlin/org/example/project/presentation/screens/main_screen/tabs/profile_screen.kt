@@ -67,8 +67,8 @@ class ProfileScreen : Screen, KoinComponent {
                 message = "Are you sure you want to logout?",
                 onConfirm = {
                     showDialog = false
-                    /*appConfig.clearAllData()
-                    navigator.replace(SplashScreen())*/
+                    appConfig.clearAllData()
+                    navigator.replace(SplashScreen())
                 },
                 onDismiss = { showDialog = false }
             )

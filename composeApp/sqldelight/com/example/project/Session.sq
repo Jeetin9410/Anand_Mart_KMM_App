@@ -1,0 +1,27 @@
+CREATE TABLE Session (
+    id TEXT NOT NULL PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    is_active INTEGER AS kotlin.Boolean NOT NULL DEFAULT 0
+);
+
+-- Queries
+selectAll:
+SELECT * FROM Session;
+
+selectActive:
+SELECT * FROM Session WHERE is_active = 1;
+
+insertSession:
+INSERT INTO Session(id, created_at, is_active)
+VALUES (?, ?, ?);
+
+updateSessionActiveState:
+UPDATE Session
+SET is_active = :is_active
+WHERE id = :id;
+
+deleteSession:
+DELETE FROM Session WHERE id = :id;
+
+clearAllSessions:
+DELETE FROM Session;
