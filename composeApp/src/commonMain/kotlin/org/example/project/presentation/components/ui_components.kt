@@ -175,3 +175,4 @@ data class BrandItem(
     val name: String,
     val icon: DrawableResource
 )
+
