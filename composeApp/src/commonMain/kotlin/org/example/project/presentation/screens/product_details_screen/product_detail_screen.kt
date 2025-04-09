@@ -49,7 +49,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.collectAsState
@@ -127,17 +129,20 @@ fun ProductDetailsScreen(
 
     Scaffold(
         topBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .background(Color.Transparent)
-                    .zIndex(1f) // Bring above content
-            ) {
-                IconButton(onClick = { navigator.pop() }, modifier = Modifier.padding(8.dp)) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.Black)
+            TopAppBar(
+                title = { Text("Details", style = appTypography().h6, color = Color.Black) },
+                backgroundColor = Color.White,
+                elevation = 0.dp,
+                navigationIcon = {
+                    IconButton(onClick = { navigator.pop() }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = "Back",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
-            }
+            )
         },
         bottomBar = {
             Row(

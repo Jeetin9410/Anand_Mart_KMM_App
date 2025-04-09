@@ -22,7 +22,7 @@ sealed class BottomNavItem(
     )
 
     object Favorites : BottomNavItem(
-        "Favorites",
+        "Wishlist",
         Icons.Default.Favorite,
         FavoritesScreen()
     )
