@@ -27,6 +27,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.benasher44.uuid.uuid4
 import com.example.project.AnandMartDb
+import createNotification
 import kotlinproject.composeapp.generated.resources.Res
 import kotlinproject.composeapp.generated.resources.compose_multiplatform
 import kotlinx.coroutines.CoroutineScope
@@ -38,9 +39,11 @@ import kotlinx.datetime.Clock
 import org.example.project.config.AppConfig
 import org.example.project.presentation.screens.main_screen.MainScreen
 import org.example.project.presentation.screens.login.LoginScreen
+import org.example.project.presentation.viewmodel.LoginViewModel
 import org.example.project.theme.typography.appTypography
 import org.example.project.utils.AppConstants
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.mp.KoinPlatform
@@ -49,14 +52,16 @@ class SplashScreen : Screen, KoinComponent {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val appConfig: AppConfig = get()
-        val db = KoinPlatform.getKoin().get<AnandMartDb>()
+        val loginViewModel = koinViewModel<LoginViewModel>()
         var isSessionValid = false
-        checkIfSessionValid(db) { isValid ->
+        loginViewModel.checkIfSessionValid() { isValid ->
             if (isValid) {
                 isSessionValid = true
             } else {
-                isSessionValid
+                CoroutineScope(Dispatchers.Main).launch {
+                    val notification = createNotification(NotificationType.TOAST )
+                    notification.show("Session Expired")
+                }
             }
         }
 
@@ -67,7 +72,7 @@ class SplashScreen : Screen, KoinComponent {
         LaunchedEffect(Unit) {
             visible = true
             delay(3000) // 3-second splash delay
-            if(appConfig.getBoolean(AppConstants.ARG_IS_LOGGED_IN) && isSessionValid){
+            if(loginViewModel.isUserLoggedIn() && isSessionValid){
                 navigator.replace(MainScreen())
             } else {
                 navigator.replace(LoginScreen())
@@ -88,26 +93,5 @@ class SplashScreen : Screen, KoinComponent {
             Text("Anand Mart", style = appTypography().h4)
             Spacer(modifier = Modifier.height(100.dp))
         }
-    }
-}
-
-fun checkIfSessionValid(db: AnandMartDb, onResult: (Boolean) -> Unit) {
-    CoroutineScope(Dispatchers.Default).launch {
-        val result = try {
-            db.transactionWithResult {
-                val session = db.sessionQueries.selectActive().executeAsOneOrNull()
-                session?.let {
-                    val currentTime = Clock.System.now().toEpochMilliseconds()
-                    val oneDayMillis = 24 * 60 * 60 * 1000L
-                    val isSameDay = (currentTime - it.created_at) < oneDayMillis
-                    it.is_active && isSameDay
-                } ?: false
-            }
-        } catch (e: Exception) {
-            println("Error checking session validity: ${e.message}")
-            false
-        }
-
-        onResult(result)
     }
 }

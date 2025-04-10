@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.benasher44.uuid.uuid4
 import com.example.project.AnandMartDb
 import compose.icons.TablerIcons
@@ -77,7 +78,6 @@ class LoginScreen : Screen, KoinComponent {
         val appConfig: AppConfig = get()
         val isLoading by loginViewModel.isLoading.collectAsState(false)
         val coroutineScope = rememberCoroutineScope()
-        val db = KoinPlatform.getKoin().get<AnandMartDb>()
 
 
         LoadingOverlay(isLoading = isLoading) {
@@ -92,9 +92,7 @@ class LoginScreen : Screen, KoinComponent {
                             val notification = createNotification(NotificationType.TOAST)
                             notification.show("Incorrect email or password!")
                         } else {
-                            appConfig.putBoolean(AppConstants.ARG_IS_LOGGED_IN, true)
-                            appConfig.putObject(AppConstants.ARG_USER_DETAILS, matchedUsers , UsersModel.serializer())
-                            startSession(db)
+                            loginViewModel.startSession(matchedUsers)
                             navigator.replace(MainScreen())
                         }
                     }
@@ -249,19 +247,4 @@ fun SocialLoginButton(iconRes: Painter) {
     }
 }
 
-fun startSession(db: AnandMartDb) {
-    CoroutineScope(Dispatchers.Default).launch {
-        try {
-            db.transaction {
-                db.sessionQueries.insertSession(
-                    id = uuid4().toString(),
-                    created_at = Clock.System.now().toEpochMilliseconds(),
-                    is_active = true
-                )
-            }
-            println("session created")
-        } catch (e: Exception) {
-            println("Error in inserting Session: ${e.message}")
-        }
-    }
-}
+

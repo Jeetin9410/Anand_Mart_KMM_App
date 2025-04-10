@@ -43,8 +43,10 @@ import org.example.project.presentation.components.showDialogPopUp
 import org.example.project.presentation.screens.profile_screen.ProfileEditScreen
 import org.example.project.presentation.screens.profile_screen.ProfileScreenUi
 import org.example.project.presentation.screens.splash.SplashScreen
+import org.example.project.presentation.viewmodel.ProfileViewModel
 import org.example.project.theme.typography.appTypography
 import org.example.project.utils.AppConstants
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
@@ -52,13 +54,10 @@ class ProfileScreen : Screen, KoinComponent {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val db = getKoin().get<AnandMartDb>()
-        val appConfig: AppConfig = get()
+        val profileViewModel = koinViewModel<ProfileViewModel>()
         var showDialog by remember { mutableStateOf(false) }
 
-        val profileWithDefault =
-            appConfig.getObject(AppConstants.ARG_USER_DETAILS, UsersModel.serializer())
-                ?: UsersModel.empty()
+        val profileWithDefault = profileViewModel.getUserDetails()
 
 
         if (showDialog) {
@@ -67,7 +66,7 @@ class ProfileScreen : Screen, KoinComponent {
                 message = "Are you sure you want to logout?",
                 onConfirm = {
                     showDialog = false
-                    appConfig.clearAllData()
+                    profileViewModel.endSession()
                     navigator.replace(SplashScreen())
                 },
                 onDismiss = { showDialog = false }
