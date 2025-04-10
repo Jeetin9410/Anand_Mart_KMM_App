@@ -1,0 +1,66 @@
+CREATE TABLE Skus (
+    id TEXT NOT NULL PRIMARY KEY,
+    sessionId TEXT NOT NULL REFERENCES Session(id) ON DELETE CASCADE,
+    skuId INTEGER NOT NULL UNIQUE,
+    skuName TEXT NOT NULL,
+    skuPrice TEXT NOT NULL,
+    skuDescription TEXT NOT NULL,
+    skuCategory TEXT NOT NULL,
+    skuImage TEXT NOT NULL,
+    skuRatingRate TEXT NOT NULL,
+    skuRatingCount INTEGER NOT NULL
+);
+
+-- Queries
+insertSku:
+INSERT INTO Skus(
+    id, sessionId, skuId, skuName, skuPrice, skuDescription, skuCategory, skuImage, skuRatingRate, skuRatingCount
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+selectAllSkus:
+SELECT * FROM Skus;
+
+selectSkusBySession:
+SELECT * FROM Skus
+WHERE sessionId = ?;
+
+selectSkuById:
+SELECT * FROM Skus
+WHERE id = ?;
+
+selectAllSkuCategory:
+SELECT * FROM Skus
+WHERE skuCategory = ?;
+
+updateSku:
+UPDATE Skus SET
+    sessionId = ?,
+    skuId = ?,
+    skuName = ?,
+    skuPrice = ?,
+    skuDescription = ?,
+    skuCategory = ?,
+    skuImage = ?,
+    skuRatingRate = ?,
+    skuRatingCount = ?
+WHERE id = ?;
+
+deleteSkuById:
+DELETE FROM Skus
+WHERE id = ?;
+
+countSkusBySession:
+SELECT COUNT(*) FROM Skus
+WHERE sessionId = ?;
+
+countSkusByCategory:
+SELECT COUNT(*) FROM Skus
+WHERE skuCategory = ?;
+
+existsSku:
+SELECT EXISTS(
+    SELECT 1 FROM Skus WHERE id = ?
+);
+
+deleteAllSkus:
+DELETE FROM Skus;

@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import org.example.project.config.AppConfig
+import org.example.project.domain.model.AppSession
 import org.example.project.domain.model.UsersModel
 import org.example.project.domain.repository.SessionRepository
 import org.example.project.utils.AppConstants
@@ -20,13 +21,20 @@ class SessionRepoImpl(
     override suspend fun startSession() {
         CoroutineScope(Dispatchers.Default).launch {
             try {
+                val id = uuid4().toString()
+                val createdAt = Clock.System.now().toEpochMilliseconds()
                 db.transaction {
                     db.sessionQueries.insertSession(
-                        id = uuid4().toString(),
-                        created_at = Clock.System.now().toEpochMilliseconds(),
+                        id = id,
+                        created_at = createdAt,
                         is_active = true
                     )
                 }
+                appConfig.putObject(
+                    AppConstants.currentSession,
+                    AppSession.empty().copy(id = id, created_at = createdAt, is_active = true),
+                    AppSession.serializer()
+                )
                 println("session created")
             } catch (e: Exception) {
                 println("Error in inserting Session: ${e.message}")
@@ -40,8 +48,8 @@ class SessionRepoImpl(
         db.userQueries.deleteAllUsers()
     }
 
-    override suspend fun currentActiveSession(): Session {
-        return db.sessionQueries.selectActive().executeAsOne()
+    override fun currentActiveSession(): AppSession? {
+        return appConfig.getObject(AppConstants.currentSession, AppSession.serializer())
     }
 
     override fun getUserDetails(): UsersModel {

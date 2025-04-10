@@ -35,3 +35,17 @@ data class Rating(
     @SerialName("count")
     val count: Int
 )
+
+@Serializable
+data class Sku(
+    val id : String,
+    val sessionId : String,
+    val skuId : Long,
+    val skuName : String,
+    val skuPrice : String,
+    val skuDescription : String,
+    val skuCategory : String,
+    val skuImage : String,
+    val skuRatingRate : String,
+    val skuRatingCount : Long
+)

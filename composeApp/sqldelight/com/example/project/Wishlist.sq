@@ -1,0 +1,72 @@
+CREATE TABLE Wishlist (
+    sessionId TEXT NOT NULL REFERENCES Session(id) ON DELETE CASCADE,
+    skuId INTEGER NOT NULL PRIMARY KEY REFERENCES Skus(skuId) ON DELETE CASCADE
+);
+
+
+CREATE VIEW WishlistDisplay AS
+SELECT
+    Wishlist.sessionId AS sessionId,
+    Wishlist.skuId AS skuId,
+
+    Skus.skuName AS skuName,
+    Skus.skuPrice AS skuPrice,
+    Skus.skuDescription AS skuDescription,
+    Skus.skuCategory AS skuCategory,
+    Skus.skuImage AS skuImage,
+    Skus.skuRatingRate AS skuRatingRate,
+    Skus.skuRatingCount AS skuRatingCount
+
+FROM Wishlist
+INNER JOIN Skus ON Wishlist.skuId = Skus.skuId;
+
+
+-- Queries
+
+-- Insert a Wishlist entry
+insertWishlist:
+INSERT INTO Wishlist( sessionId, skuId)
+VALUES ( ?, ?);
+
+
+-- Delete Wishlist by Session ID
+deleteWishlistBySession:
+DELETE FROM Wishlist WHERE sessionId = ?;
+
+-- Delete Wishlist by SkuId
+deleteWishlistBySkuId:
+DELETE FROM Wishlist WHERE skuId = ?;
+
+-- Get all Wishlist entries
+getAllWishlist:
+SELECT * FROM Wishlist;
+
+-- Get Wishlist entries for a given session
+getWishlistBySession:
+SELECT * FROM Wishlist WHERE sessionId = ?;
+
+-- Get WishlistDisplay for all sessions
+getAllWishlistDisplay:
+SELECT * FROM WishlistDisplay;
+
+-- Get WishlistDisplay for a specific session
+getWishlistDisplayBySession:
+SELECT * FROM WishlistDisplay WHERE sessionId = ?;
+
+-- Get WishlistDisplay for a specific skuId (if needed)
+getWishlistDisplayBySkuId:
+SELECT * FROM WishlistDisplay WHERE skuId = ?;
+
+-- Check if skuId already in wishlist (to avoid duplicates)
+isSkuInWishlist:
+SELECT EXISTS(
+    SELECT 1 FROM Wishlist WHERE sessionId = ? AND skuId = ?
+);
+
+-- Delete wishlist item by skuId
+deleteAllWishlist:
+DELETE FROM Wishlist;
+
+-- Count wishlist items for session
+countWishlistItems:
+SELECT COUNT(*) FROM Wishlist WHERE sessionId = ?;

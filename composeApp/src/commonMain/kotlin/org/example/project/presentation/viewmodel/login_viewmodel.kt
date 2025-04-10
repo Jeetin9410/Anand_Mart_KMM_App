@@ -3,6 +3,7 @@ package org.example.project.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import com.benasher44.uuid.uuid4
 import com.example.project.AnandMartDb
+import com.example.project.Session
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -12,16 +13,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import org.example.project.config.AppConfig
+import org.example.project.domain.model.AppSession
 import org.example.project.domain.model.UsersModel
 import org.example.project.domain.repository.LoginRepository
 import org.example.project.domain.repository.SessionRepository
+import org.example.project.utils.AppConstants
 
 class LoginViewModel(
     private val loginRepository: LoginRepository,
     private val session: SessionRepository,
     private val appConfig: AppConfig,
     private val db: AnandMartDb
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val _allUsers = MutableStateFlow<List<UsersModel>>(emptyList())
     val allUsers: StateFlow<List<UsersModel>> = _allUsers
@@ -29,7 +32,7 @@ class LoginViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    suspend fun fetchAllUsers() : List<UsersModel> {
+    suspend fun fetchAllUsers(): List<UsersModel> {
         withContext(Dispatchers.IO) {
             _isLoading.value = true
             try {
