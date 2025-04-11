@@ -88,6 +88,7 @@ import org.example.project.presentation.components.BrandItem
 import org.example.project.presentation.components.BrandsTabs
 import org.example.project.presentation.components.CategoryChipsTabs
 import org.example.project.presentation.components.ParallaxCarouselBanner
+import org.example.project.presentation.components.RatingBar
 import org.example.project.presentation.components.SearchBar
 import org.example.project.presentation.screens.login.LoginScreen
 import org.example.project.presentation.screens.product_details_screen.ProductDetails
@@ -379,28 +380,6 @@ fun ProductItem(
 
             }
         }
-    }
-}
-
-@Composable
-fun RatingBar(
-    rating: Double,
-    maxStars: Int = 5
-) {
-    Row {
-        Icon(
-            imageVector = Icons.Default.Star,
-            contentDescription = null,
-            tint = AppColors.secondary,
-            modifier = Modifier.size(16.dp)
-        )
-
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = rating.toString(),
-            style = appTypography().body2.copy(fontSize = 12.sp),
-            color = AppColors.textSecondary
-        )
     }
 }
 

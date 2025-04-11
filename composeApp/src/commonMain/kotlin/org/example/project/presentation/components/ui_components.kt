@@ -26,6 +26,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
@@ -176,3 +177,25 @@ data class BrandItem(
     val icon: DrawableResource
 )
 
+
+@Composable
+fun RatingBar(
+    rating: Double,
+    maxStars: Int = 5
+) {
+    Row {
+        Icon(
+            imageVector = Icons.Default.Star,
+            contentDescription = null,
+            tint = AppColors.secondary,
+            modifier = Modifier.size(16.dp)
+        )
+
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = rating.toString(),
+            style = appTypography().body2.copy(fontSize = 12.sp),
+            color = AppColors.textSecondary
+        )
+    }
+}
