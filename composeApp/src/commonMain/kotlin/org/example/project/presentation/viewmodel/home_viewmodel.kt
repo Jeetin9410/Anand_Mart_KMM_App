@@ -6,6 +6,7 @@ import com.benasher44.uuid.uuid4
 import com.example.project.Session
 import com.example.project.Skus
 import com.example.project.Wishlist
+import com.example.project.WishlistDisplay
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.delay
 import org.example.project.network.ApiClient
@@ -34,6 +35,9 @@ class ProductViewModel(
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
+
+    private val _wishlistProducts = MutableStateFlow<List<WishlistDisplay>>(emptyList())
+    val wishlistProducts: StateFlow<List<WishlistDisplay>> = _wishlistProducts
 
     init {
         fetchProducts()
@@ -100,6 +104,41 @@ class ProductViewModel(
                 currentList.map {
                     if (it.id == skuId.toInt()) it.copy(isFavourite = !currentlyInWishlist) else it
                 }
+            }
+        }
+    }
+
+
+    fun fetchWishlistProducts() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+               _wishlistProducts.value =  wishlistDao.getAllWishlistDisplay()
+            } catch (e: Exception) {
+                println("Error fetching wishlist items: ${e.message}")
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun removeSkuFromWishlist(skuId: Long) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                wishlistDao.deleteBySkuId(skuId).let {
+                    _wishlistProducts.value =  wishlistDao.getAllWishlistDisplay()
+                }
+
+                _products.update { currentList ->
+                    currentList.map {
+                        if (it.id == skuId.toInt()) it.copy(isFavourite = false) else it
+                    }
+                }
+            } catch (e: Exception) {
+                println("Error in removing wishlist itemid : $skuId : ${e.message}")
+            } finally {
+                _isLoading.value = false
             }
         }
     }
