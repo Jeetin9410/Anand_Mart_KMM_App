@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.benasher44.uuid.uuid4
 import com.example.project.Session
 import com.example.project.Skus
+import com.example.project.Wishlist
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.delay
 import org.example.project.network.ApiClient
@@ -17,12 +18,15 @@ import org.example.project.domain.model.Sku
 import org.example.project.domain.repository.HomeRepository
 import org.example.project.domain.repository.SessionRepository
 import org.example.project.domain.repository.SkuRepository
+import org.example.project.domain.repository.WishListRepository
+import kotlinx.coroutines.flow.update
 
 class ProductViewModel(
     private val homeRepository: HomeRepository,
     private val skuRepository: SkuRepository,
     private val session: SessionRepository,
     private val appConfig: AppConfig,
+    private val wishlistDao: WishListRepository
 ) : ViewModel() {
 
     private val _products = MutableStateFlow<List<Product>>(emptyList())
@@ -40,7 +44,7 @@ class ProductViewModel(
             _isLoading.value = true
             try {
                 homeRepository.getAllProducts().let {
-                    _products.value = it
+                    _products.value = it.map { it.copy(isFavourite = wishlistDao.isSkuInWishlist(sessionId = session.currentActiveSession()?.id ?: "", it.id.toLong())) }
                     saveSkusToDb(it.map {
                         Skus(
                             id = uuid4().toString(),
@@ -80,4 +84,24 @@ class ProductViewModel(
             }
         }
     }
+
+    fun toggleWishlist(skuId: Long) {
+        viewModelScope.launch {
+            val sessionId = session.currentActiveSession()?.id ?: return@launch
+
+            val currentlyInWishlist = wishlistDao.isSkuInWishlist(sessionId,skuId)
+            if (currentlyInWishlist) {
+                wishlistDao.deleteBySkuId(skuId)
+            } else {
+                wishlistDao.insert(Wishlist(sessionId = sessionId, skuId = skuId))
+            }
+
+            _products.update { currentList ->
+                currentList.map {
+                    if (it.id == skuId.toInt()) it.copy(isFavourite = !currentlyInWishlist) else it
+                }
+            }
+        }
+    }
+
 }

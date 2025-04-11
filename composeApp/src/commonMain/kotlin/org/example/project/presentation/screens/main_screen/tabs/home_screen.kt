@@ -246,7 +246,7 @@ class HomeScreen : Screen, KoinComponent {
                                         )
                                     },
                                     onWishlistClick = {
-
+                                        productViewModel.toggleWishlist(product.id.toLong())
                                     }
                                 )
                             }
@@ -320,9 +320,9 @@ fun ProductItem(
                         .size(28.dp)
                 ) {
                     Icon(
-                        imageVector = if (true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        imageVector = if (product.isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Wishlist",
-                        tint = if (true) Color.Red else Color.Gray,
+                        tint = if (product.isFavourite) Color.Red else Color.Gray,
                         modifier = Modifier.size(18.dp)
                     )
                 }

@@ -24,7 +24,9 @@ data class Product(
     val image: String,
 
     @SerialName("rating")
-    val rating: Rating
+    val rating: Rating,
+
+    val isFavourite: Boolean = false
 )
 
 @Serializable
