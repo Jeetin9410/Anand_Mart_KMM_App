@@ -40,6 +40,7 @@ import kotlinproject.composeapp.generated.resources.Res
 import kotlinproject.composeapp.generated.resources.google
 import org.example.project.theme.colors.AppColors
 import org.example.project.theme.typography.appTypography
+import org.example.project.utils.shimmerEffect
 
 @Composable
 fun ProfileImage(
@@ -198,4 +199,44 @@ fun RatingBar(
             color = AppColors.textSecondary
         )
     }
+}
+
+@Composable
+fun productItemShimmer(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .padding(8.dp)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column {
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .shimmerEffect()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Box(
+                modifier = Modifier
+                    .height(20.dp)
+                    .fillMaxWidth(0.6f)
+                    .clip(RoundedCornerShape(4.dp))
+                    .shimmerEffect()
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Box(
+                modifier = Modifier
+                    .height(15.dp)
+                    .fillMaxWidth(0.4f)
+                    .clip(RoundedCornerShape(4.dp))
+                    .shimmerEffect()
+            )
+        }
+    }
+
 }

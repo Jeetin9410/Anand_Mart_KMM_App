@@ -90,6 +90,7 @@ import org.example.project.presentation.components.CategoryChipsTabs
 import org.example.project.presentation.components.ParallaxCarouselBanner
 import org.example.project.presentation.components.RatingBar
 import org.example.project.presentation.components.SearchBar
+import org.example.project.presentation.components.productItemShimmer
 import org.example.project.presentation.screens.login.LoginScreen
 import org.example.project.presentation.screens.product_details_screen.ProductDetails
 import org.example.project.presentation.screens.product_details_screen.ProductDetailsScreen
@@ -115,7 +116,14 @@ class HomeScreen : Screen, KoinComponent {
         var filteredProducts = products
         val isLoading by productViewModel.isLoading.collectAsState()
         var query by remember { mutableStateOf("") }
-        val categories = listOf("All", "Men's Clothing", "Women's Clothing", "Electronics", "Jewelery", "Watches")
+        val categories = listOf(
+            "All",
+            "Men's Clothing",
+            "Women's Clothing",
+            "Electronics",
+            "Jewelery",
+            "Watches"
+        )
         var selectedCategory by remember { mutableStateOf(categories.first()) }
         val scrollState = rememberScrollState()
         val focusManager = LocalFocusManager.current
@@ -144,118 +152,147 @@ class HomeScreen : Screen, KoinComponent {
                     Spacer(modifier = Modifier.height(16.dp))
                     OffersCarousel()
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Top Brands", style = appTypography().subtitle1, fontWeight = FontWeight.Bold)
-                        Text("See more", style = appTypography().caption.copy(color = Color.DarkGray))
+                        Text(
+                            "Top Brands",
+                            style = appTypography().subtitle1,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            "See more",
+                            style = appTypography().caption.copy(color = Color.DarkGray)
+                        )
                     }
                     BrandsTabs(
                         categories = listOf(
-                            BrandItem(1, "",Res.drawable.nike ),
-                            BrandItem(2, "",Res.drawable.rolex ),
-                            BrandItem(3, "",Res.drawable.lv ),
-                            BrandItem(4, "",Res.drawable.chanel ),
-                            BrandItem(5, "",Res.drawable.armaani )),
+                            BrandItem(1, "", Res.drawable.nike),
+                            BrandItem(2, "", Res.drawable.rolex),
+                            BrandItem(3, "", Res.drawable.lv),
+                            BrandItem(4, "", Res.drawable.chanel),
+                            BrandItem(5, "", Res.drawable.armaani)
+                        ),
                         onCategorySelected = { }
                     )
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Top Categories", style = appTypography().subtitle1, fontWeight = FontWeight.Bold)
-                        Text("See more", style = appTypography().caption.copy(color = Color.DarkGray))
+                        Text(
+                            "Top Categories",
+                            style = appTypography().subtitle1,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            "See more",
+                            style = appTypography().caption.copy(color = Color.DarkGray)
+                        )
                     }
                     CategoryChipsTabs(
                         categories = categories,
                         selectedCategory = selectedCategory,
                         onCategorySelected = { selected ->
                             selectedCategory = selected
-                            if(selected == "All") {
+                            if (selected == "All") {
                                 filteredProducts = products
                             } else {
-                                filteredProducts = products.filter { it.category.lowercase().equals(selected.lowercase()) }
+                                filteredProducts = products.filter {
+                                    it.category.lowercase().equals(selected.lowercase())
+                                }
                             }
                         }
                     )
-                    /*LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier.fillMaxWidth(),
-                        contentPadding = PaddingValues(2.dp),
-                        horizontalArrangement = Arrangement.spacedBy(2.dp),
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         if (isLoading) {
-                            items(6) { ProductSkeletonLoader() }
-                        } else {
-                            items(products) { product ->
-                                ProductItem(
-                                    product = product,
-                                    modifier = Modifier.padding(4.dp),
-                                    onClick = { }
-                                )
+                            repeat(3) { // 3 rows with 2 items each = 6 loaders
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 5.dp),
+                                    horizontalArrangement = Arrangement.Center,
+
+                                    ) {
+                                    repeat(2) {
+                                        productItemShimmer(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .height(220.dp)
+                                        )
+                                    }
+                                }
                             }
-                        }
-                    }*/
-                    filteredProducts.chunked(2).forEach { rowItems ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            rowItems.forEach { product ->
-                                ProductItem(
-                                    modifier = Modifier.weight(1f),
-                                    product = product,
-                                    onClick = {
-                                        navigator.push(
-                                            ProductDetails(
-                                                ProductNew(
-                                                    title = product.title,
-                                                    priceBySize = mapOf(
-                                                        "S" to product.price,
-                                                        "M" to product.price.plus(10),
-                                                        "L" to product.price.plus(20),
-                                                        "XL" to product.price.plus(30)
-                                                    ),
-                                                    originalPrice = product.price.times(2),
-                                                    rating = product.rating.rate,
-                                                    description = product.description,
-                                                    images = listOf(
-                                                        product.image,
-                                                        product.image,
-                                                        product.image,
-                                                        product.image,
-                                                    ),
-                                                    sizes = listOf("S", "M", "L", "XL"),
-                                                    colors = listOf(
-                                                        0xFF80DEEA,
-                                                        0xFFCFD8DC,
-                                                        0xFFD32F2F,
-                                                        0xFFF8BBD0
-                                                    ),
-                                                    specs = mapOf(
-                                                        "Closure" to "Button",
-                                                        "Collar" to "Notched Lapel",
-                                                        "Fabric" to "Linen",
-                                                        "Length" to "Longline",
-                                                        "Lining Fabric" to "Unlined"
+                        } else {
+                            filteredProducts.chunked(2).forEach { rowItems ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                ) {
+                                    rowItems.forEach { product ->
+                                        ProductItem(
+                                            modifier = Modifier.weight(1f),
+                                            product = product,
+                                            onClick = {
+                                                navigator.push(
+                                                    ProductDetails(
+                                                        ProductNew(
+                                                            title = product.title,
+                                                            priceBySize = mapOf(
+                                                                "S" to product.price,
+                                                                "M" to product.price.plus(10),
+                                                                "L" to product.price.plus(20),
+                                                                "XL" to product.price.plus(30)
+                                                            ),
+                                                            originalPrice = product.price.times(2),
+                                                            rating = product.rating.rate,
+                                                            description = product.description,
+                                                            images = listOf(
+                                                                product.image,
+                                                                product.image,
+                                                                product.image,
+                                                                product.image,
+                                                            ),
+                                                            sizes = listOf("S", "M", "L", "XL"),
+                                                            colors = listOf(
+                                                                0xFF80DEEA,
+                                                                0xFFCFD8DC,
+                                                                0xFFD32F2F,
+                                                                0xFFF8BBD0
+                                                            ),
+                                                            specs = mapOf(
+                                                                "Closure" to "Button",
+                                                                "Collar" to "Notched Lapel",
+                                                                "Fabric" to "Linen",
+                                                                "Length" to "Longline",
+                                                                "Lining Fabric" to "Unlined"
+                                                            )
+                                                        )
                                                     )
                                                 )
-                                            )
+                                            },
+                                            onWishlistClick = {
+                                                productViewModel.toggleWishlist(product.id.toLong())
+                                            }
                                         )
-                                    },
-                                    onWishlistClick = {
-                                        productViewModel.toggleWishlist(product.id.toLong())
                                     }
-                                )
-                            }
-                            if (rowItems.size == 1) {
-                                Spacer(Modifier.weight(1f))
+                                    if (rowItems.size == 1) {
+                                        Spacer(Modifier.weight(1f))
+                                    }
+                                }
                             }
                         }
                     }
+
 
 
                     Spacer(modifier = Modifier.height(80.dp))
@@ -296,7 +333,7 @@ fun ProductItem(
             .padding(2.dp),
         shape = RoundedCornerShape(12.dp),
         elevation = 4.dp,
-        onClick = {onClick.invoke()}
+        onClick = { onClick.invoke() }
     ) {
         Column {
 
@@ -370,10 +407,11 @@ fun ProductItem(
                     RatingBar(rating = product.rating.rate)
                 }
 
-                /*Button(onClick = {}) {
-                    Text(text = "Add to Cart", style = appTypography().button)
-                }*/
-                Box(modifier = Modifier.fillMaxWidth().padding(top = 5.dp, start = 5.dp, end = 5.dp), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(top = 5.dp, start = 5.dp, end = 5.dp),
+                    contentAlignment = Alignment.Center
+                ) {
                     AddToCartButton()
                 }
 
@@ -430,40 +468,4 @@ fun OffersCarousel() {
         autoScrollInterval = 3000L,
         //bannerHeight = 250,
     )
-}
-
-@Composable
-fun ProductSkeletonLoader(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-    ) {
-        Box(
-            modifier = Modifier
-                .size(150.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .shimmerEffect()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Box(
-            modifier = Modifier
-                .height(20.dp)
-                .fillMaxWidth(0.6f)
-                .clip(RoundedCornerShape(4.dp))
-                .shimmerEffect()
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Box(
-            modifier = Modifier
-                .height(15.dp)
-                .fillMaxWidth(0.4f)
-                .clip(RoundedCornerShape(4.dp))
-                .shimmerEffect()
-        )
-    }
 }
