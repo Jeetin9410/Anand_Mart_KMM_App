@@ -31,6 +31,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
@@ -38,10 +39,13 @@ import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -202,36 +206,49 @@ class HomeScreen : Screen, KoinComponent {
                             rowItems.forEach { product ->
                                 ProductItem(
                                     modifier = Modifier.weight(1f),
-                                    product = product
-                                ) {
-                                    navigator.push(ProductDetails(ProductNew(
-                                        title = product.title,
-                                        priceBySize = mapOf(
-                                            "S" to product.price,
-                                            "M" to product.price.plus(10),
-                                            "L" to product.price.plus(20),
-                                            "XL" to product.price.plus(30)
-                                        ),
-                                        originalPrice = product.price.times(2),
-                                        rating = product.rating.rate,
-                                        description = product.description,
-                                        images = listOf(
-                                            product.image,
-                                            product.image,
-                                            product.image,
-                                            product.image,
-                                        ),
-                                        sizes = listOf("S", "M", "L", "XL"),
-                                        colors = listOf(0xFF80DEEA, 0xFFCFD8DC, 0xFFD32F2F, 0xFFF8BBD0),
-                                        specs = mapOf(
-                                            "Closure" to "Button",
-                                            "Collar" to "Notched Lapel",
-                                            "Fabric" to "Linen",
-                                            "Length" to "Longline",
-                                            "Lining Fabric" to "Unlined"
+                                    product = product,
+                                    onClick = {
+                                        navigator.push(
+                                            ProductDetails(
+                                                ProductNew(
+                                                    title = product.title,
+                                                    priceBySize = mapOf(
+                                                        "S" to product.price,
+                                                        "M" to product.price.plus(10),
+                                                        "L" to product.price.plus(20),
+                                                        "XL" to product.price.plus(30)
+                                                    ),
+                                                    originalPrice = product.price.times(2),
+                                                    rating = product.rating.rate,
+                                                    description = product.description,
+                                                    images = listOf(
+                                                        product.image,
+                                                        product.image,
+                                                        product.image,
+                                                        product.image,
+                                                    ),
+                                                    sizes = listOf("S", "M", "L", "XL"),
+                                                    colors = listOf(
+                                                        0xFF80DEEA,
+                                                        0xFFCFD8DC,
+                                                        0xFFD32F2F,
+                                                        0xFFF8BBD0
+                                                    ),
+                                                    specs = mapOf(
+                                                        "Closure" to "Button",
+                                                        "Collar" to "Notched Lapel",
+                                                        "Fabric" to "Linen",
+                                                        "Length" to "Longline",
+                                                        "Lining Fabric" to "Unlined"
+                                                    )
+                                                )
+                                            )
                                         )
-                                    )))
-                                }
+                                    },
+                                    onWishlistClick = {
+
+                                    }
+                                )
                             }
                             if (rowItems.size == 1) {
                                 Spacer(Modifier.weight(1f))
@@ -269,7 +286,8 @@ fun NetworkImage(url: String, modifier: Modifier, contentScale: ContentScale = C
 fun ProductItem(
     product: Product,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    onWishlistClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier
@@ -281,11 +299,34 @@ fun ProductItem(
     ) {
         Column {
 
-            NetworkImage(
-                product.image, modifier = Modifier.height(100.dp)
-                    .fillMaxWidth()
-                    .padding(2.dp),
-            )
+            Box {
+                NetworkImage(
+                    product.image,
+                    modifier = Modifier
+                        .height(100.dp)
+                        .fillMaxWidth()
+                        .padding(2.dp)
+                )
+
+                IconButton(
+                    onClick = { onWishlistClick() },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(6.dp)
+                        .background(
+                            color = Color.White.copy(alpha = 0.7f),
+                            shape = CircleShape
+                        )
+                        .size(28.dp)
+                ) {
+                    Icon(
+                        imageVector = if (true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Wishlist",
+                        tint = if (true) Color.Red else Color.Gray,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(1.dp))
 
             Row(
