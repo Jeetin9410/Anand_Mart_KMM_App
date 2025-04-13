@@ -113,7 +113,7 @@ class ProductViewModel(
 
             _displayProducts.update { currentList ->
                 currentList.map {
-                    if (it.id.toLong() == skuId) it.copy(isWishlisted = if(currentlyInWishlist) 0L else 1L) else it
+                    if (it.skuId == skuId) it.copy(isWishlisted = if(currentlyInWishlist) 0L else 1L) else it
                 }
             }
         }
