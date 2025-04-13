@@ -7,7 +7,7 @@ import org.example.project.domain.model.UsersModel
 interface SessionRepository{
     suspend fun startSession()
     suspend fun endSession()
-    fun currentActiveSession(): AppSession?
+    fun currentActiveSession(): AppSession
     fun getIsUserLoggedIn(): Boolean
     fun setUserLoggedIn(): Boolean
     fun getUserDetails(): UsersModel

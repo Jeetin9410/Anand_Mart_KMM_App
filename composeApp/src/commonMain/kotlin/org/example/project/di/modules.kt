@@ -33,6 +33,7 @@ val sharedModule = module {
     singleOf(::SessionRepoImpl).binds(arrayOf(SessionRepository::class))
     singleOf(::SkuRepositoryImpl).binds(arrayOf(SkuRepository::class))
     singleOf(::WishListRepoImpl).binds(arrayOf(WishListRepository::class))
+    singleOf(::CartRepositoryImpl).binds(arrayOf(CartRepository::class))
     viewModelOf(::ProductViewModel)
     viewModelOf(::LoginViewModel) // OR viewModel { LoginViewModel(get()) }
     viewModelOf(::ProfileViewModel)

@@ -26,7 +26,9 @@ data class Product(
     @SerialName("rating")
     val rating: Rating,
 
-    val isFavourite: Boolean = false
+    val isFavourite: Boolean = false,
+
+    val quantity: Int = 0
 )
 
 @Serializable

@@ -1,0 +1,48 @@
+CREATE TABLE Cart (
+    skuId INTEGER NOT NULL PRIMARY KEY,
+    sessionId TEXT NOT NULL REFERENCES Session(id) ON DELETE CASCADE,
+    quantity INTEGER NOT NULL
+);
+
+CREATE VIEW CartDisplay AS
+SELECT 
+    Cart.skuId AS cartItemId,
+    Cart.sessionId,
+    Cart.quantity,
+    Skus.skuName,
+    Skus.skuPrice,
+    Skus.skuDescription,
+    Skus.skuCategory,
+    Skus.skuImage,
+    Skus.skuRatingRate,
+    Skus.skuRatingCount
+FROM Cart
+INNER JOIN Skus ON Cart.skuId = Skus.skuId;
+
+selectAllCartDisplay:
+SELECT * FROM CartDisplay;
+
+insertIntoCart:
+INSERT INTO Cart(skuId ,sessionId, quantity)
+VALUES (:skuId, :sessionId, :quantity);
+
+updateCartQuantity:
+UPDATE Cart
+SET quantity = :quantity
+WHERE skuId = :skuId AND sessionId = :sessionId;
+
+removeFromCart:
+DELETE FROM Cart
+WHERE skuId = :skuId AND sessionId = :sessionId;
+
+clearCart:
+DELETE FROM Cart
+WHERE sessionId = :sessionId;
+
+checkIfExistsInCart:
+SELECT COUNT(*) FROM Cart
+WHERE skuId = :skuId AND sessionId = :sessionId;
+
+getCartItemBySkuId:
+SELECT * FROM CartDisplay
+WHERE cartItemId = :skuId AND sessionId = :sessionId;

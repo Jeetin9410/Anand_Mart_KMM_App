@@ -33,9 +33,12 @@ import org.example.project.theme.colors.AppColors
 import org.example.project.theme.typography.appTypography
 
 @Composable
-fun AddToCartButton() {
-    var addedToCart by remember { mutableStateOf(false) }
-    var quantity by remember { mutableStateOf(1) }
+fun AddToCartButton(
+    initialQuantity: Int = 0,
+    onQuantityChange: (quantity: Int) -> Unit
+) {
+    var addedToCart by remember { mutableStateOf(initialQuantity > 0) }
+    var quantity by remember { mutableStateOf(initialQuantity) }
 
     val transition = updateTransition(targetState = addedToCart, label = "CartTransition")
 
@@ -47,14 +50,16 @@ fun AddToCartButton() {
 
     Surface(
         elevation = 0.dp,
-        shape = if(addedToCart) RoundedCornerShape(12.dp) else RoundedCornerShape(24.dp),
+        shape = if (addedToCart) RoundedCornerShape(12.dp) else RoundedCornerShape(24.dp),
         color = AppColors.primaryMuted,
         modifier = Modifier
             .width(buttonWidth)
             .height(buttonHeight)
             .clickable(enabled = !addedToCart) {
+                quantity++
                 addedToCart = true
-            } // disable when count selector shows
+                onQuantityChange(quantity) // Initial add
+            }
     ) {
         Box(
             contentAlignment = Alignment.Center,
@@ -74,12 +79,17 @@ fun AddToCartButton() {
                 ) {
                     TextButton(
                         onClick = {
-                            if (quantity > 1) quantity--
-                            else {
+                            if (quantity > 1) {
+                                quantity--
+                                onQuantityChange(quantity)
+                            } else {
                                 addedToCart = false
+                                onQuantityChange(0) // optional: treat as removed
                             }
                         },
-                        modifier = Modifier.weight(1f).padding(horizontal = 4.dp)
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 4.dp)
                     ) {
                         Text(
                             text = "-",
@@ -91,8 +101,8 @@ fun AddToCartButton() {
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .fillMaxHeight(), // Fill vertical space of the Row
-                        contentAlignment = Alignment.Center // Centers content both horizontally and vertically
+                            .fillMaxHeight(),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = quantity.toString(),
@@ -103,8 +113,13 @@ fun AddToCartButton() {
                     }
 
                     TextButton(
-                        onClick = { quantity++ },
-                        modifier = Modifier.weight(1f).padding(horizontal = 4.dp)
+                        onClick = {
+                            quantity++
+                            onQuantityChange(quantity)
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 4.dp)
                     ) {
                         Text(
                             text = "+",
@@ -117,3 +132,4 @@ fun AddToCartButton() {
         }
     }
 }
+

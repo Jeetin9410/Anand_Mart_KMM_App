@@ -15,10 +15,12 @@ SELECT
     Skus.skuCategory AS skuCategory,
     Skus.skuImage AS skuImage,
     Skus.skuRatingRate AS skuRatingRate,
-    Skus.skuRatingCount AS skuRatingCount
+    Skus.skuRatingCount AS skuRatingCount,
+    Cart.quantity AS quantity
 
 FROM Wishlist
-INNER JOIN Skus ON Wishlist.skuId = Skus.skuId;
+INNER JOIN Skus ON Wishlist.skuId = Skus.skuId
+LEFT JOIN Cart ON Cart.skuId = Wishlist.skuId AND Cart.sessionId = Wishlist.sessionId;
 
 
 -- Queries

@@ -129,7 +129,8 @@ class FavoritesScreen : Screen, KoinComponent {
                                         rate = product.skuRatingRate.toDouble(),
                                         count = product.skuRatingCount.toInt()
                                     ),
-                                    isFavourite = true
+                                    isFavourite = true,
+                                    quantity = product.quantity?.toInt() ?: 0
                                 ),
                                 modifier = Modifier.padding(4.dp),
                                 onClick = {
@@ -172,6 +173,10 @@ class FavoritesScreen : Screen, KoinComponent {
                                 },
                                 onWishlistClick = {
                                     productViewModel.removeSkuFromWishlist(product.skuId)
+                                },
+                                onAddToCartClick = { quantity ->
+                                    productViewModel.addToCart(product.skuId.toLong(), quantity)
+
                                 }
                             )
                         }

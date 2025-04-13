@@ -3,11 +3,13 @@ package org.example.project.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.benasher44.uuid.uuid4
+import com.example.project.Cart
 import com.example.project.Session
 import com.example.project.Skus
 import com.example.project.Wishlist
 import com.example.project.WishlistDisplay
 import io.ktor.client.HttpClient
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import org.example.project.network.ApiClient
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,13 +23,15 @@ import org.example.project.domain.repository.SessionRepository
 import org.example.project.domain.repository.SkuRepository
 import org.example.project.domain.repository.WishListRepository
 import kotlinx.coroutines.flow.update
+import org.example.project.domain.repository.CartRepository
 
 class ProductViewModel(
     private val homeRepository: HomeRepository,
     private val skuRepository: SkuRepository,
     private val session: SessionRepository,
     private val appConfig: AppConfig,
-    private val wishlistDao: WishListRepository
+    private val wishlistDao: WishListRepository,
+    private val cartRepo: CartRepository,
 ) : ViewModel() {
 
     private val _products = MutableStateFlow<List<Product>>(emptyList())
@@ -48,7 +52,14 @@ class ProductViewModel(
             _isLoading.value = true
             try {
                 homeRepository.getAllProducts().let {
-                    _products.value = it.map { it.copy(isFavourite = wishlistDao.isSkuInWishlist(sessionId = session.currentActiveSession()?.id ?: "", it.id.toLong())) }
+                    _products.value = it.map {
+                        it.copy(
+                            isFavourite = wishlistDao.isSkuInWishlist(
+                                sessionId = session.currentActiveSession().id, it.id.toLong()
+                            ),
+                            quantity = cartRepo.getCartItemBySkuId(skuId = it.id, sessionId = session.currentActiveSession().id)?.quantity?.toInt() ?: 0
+                        )
+                    }
                     saveSkusToDb(it.map {
                         Skus(
                             id = uuid4().toString(),
@@ -91,9 +102,8 @@ class ProductViewModel(
 
     fun toggleWishlist(skuId: Long) {
         viewModelScope.launch {
-            val sessionId = session.currentActiveSession()?.id ?: return@launch
-
-            val currentlyInWishlist = wishlistDao.isSkuInWishlist(sessionId,skuId)
+            val sessionId = session.currentActiveSession().id
+            val currentlyInWishlist = wishlistDao.isSkuInWishlist(sessionId, skuId)
             if (currentlyInWishlist) {
                 wishlistDao.deleteBySkuId(skuId)
             } else {
@@ -137,6 +147,47 @@ class ProductViewModel(
                 }
             } catch (e: Exception) {
                 println("Error in removing wishlist itemid : $skuId : ${e.message}")
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun addToCart(skuId: Long, quantity: Int) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                if (quantity == 1) {
+                    cartRepo.removeFromCart(
+                        skuId = skuId.toInt(),
+                        sessionId = session.currentActiveSession().id
+                    )
+                    cartRepo.insertIntoCart(
+                        Cart(
+                            sessionId = session.currentActiveSession().id,
+                            skuId = skuId,
+                            quantity = quantity.toLong()
+                        )
+                    )
+                } else if (quantity == 0) {
+                    cartRepo.removeFromCart(
+                        skuId = skuId.toInt(),
+                        sessionId = session.currentActiveSession().id
+                    )
+                } else {
+                    cartRepo.updateCartQuantity(
+                        skuId = skuId,
+                        sessionId = session.currentActiveSession().id,
+                        quantity = quantity
+                    )
+                }
+                _products.update { currentList ->
+                    currentList.map {
+                        if (it.id == skuId.toInt()) it.copy(quantity = quantity) else it
+                    }
+                }
+            } catch (e: Exception) {
+                println("Error in adding to cart item_id : $skuId : ${e.message}")
             } finally {
                 _isLoading.value = false
             }

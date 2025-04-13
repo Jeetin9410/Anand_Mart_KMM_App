@@ -48,6 +48,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,6 +66,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -106,7 +110,6 @@ import org.koin.core.component.get
 
 
 class HomeScreen : Screen, KoinComponent {
-    @OptIn(ExperimentalLayoutApi::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
@@ -282,6 +285,10 @@ class HomeScreen : Screen, KoinComponent {
                                             },
                                             onWishlistClick = {
                                                 productViewModel.toggleWishlist(product.id.toLong())
+                                            },
+                                            onAddToCartClick = { quantity ->
+                                                println("Title : ${product.title} , id : ${product.id} - Quantity: $quantity " )
+                                                productViewModel.addToCart(product.id.toLong(), quantity)
                                             }
                                         )
                                     }
@@ -325,7 +332,8 @@ fun ProductItem(
     product: Product,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
-    onWishlistClick: () -> Unit = {}
+    onWishlistClick: () -> Unit = {},
+    onAddToCartClick: (quantity: Int) -> Unit = {},
 ) {
     Card(
         modifier = modifier
@@ -412,7 +420,9 @@ fun ProductItem(
                         .padding(top = 5.dp, start = 5.dp, end = 5.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    AddToCartButton()
+                    AddToCartButton(initialQuantity = product.quantity) { quantity ->
+                        onAddToCartClick(quantity)
+                    }
                 }
 
 

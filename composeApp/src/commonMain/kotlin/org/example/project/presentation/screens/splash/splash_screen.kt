@@ -57,11 +57,6 @@ class SplashScreen : Screen, KoinComponent {
         loginViewModel.checkIfSessionValid() { isValid ->
             if (isValid) {
                 isSessionValid = true
-            } else {
-                CoroutineScope(Dispatchers.Main).launch {
-                    val notification = createNotification(NotificationType.TOAST )
-                    notification.show("Session Expired")
-                }
             }
         }
 

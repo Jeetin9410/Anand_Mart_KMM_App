@@ -48,8 +48,8 @@ class SessionRepoImpl(
         db.userQueries.deleteAllUsers()
     }
 
-    override fun currentActiveSession(): AppSession? {
-        return appConfig.getObject(AppConstants.currentSession, AppSession.serializer())
+    override fun currentActiveSession(): AppSession {
+        return appConfig.getObject(AppConstants.currentSession, AppSession.serializer()) ?: AppSession.empty()
     }
 
     override fun getUserDetails(): UsersModel {
