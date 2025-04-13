@@ -40,8 +40,11 @@ class ProductViewModel(
     private val cartRepo: CartRepository,
 ) : ViewModel() {
 
-    private val _products = MutableStateFlow<List<Product>>(emptyList())
-    val products: StateFlow<List<Product>> = _products
+    private val _selectedCategory = MutableStateFlow("All")
+    val selectedCategory: StateFlow<String> = _selectedCategory
+
+    private val _displayProducts = MutableStateFlow<List<SkuDisplay>>(emptyList())
+    val displayProducts: StateFlow<List<SkuDisplay>> get() = _displayProducts
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading
@@ -53,19 +56,11 @@ class ProductViewModel(
 
     }*/
 
-    private fun fetchProducts() {
+    private fun fetchAndSaveProducts() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
                 homeRepository.getAllProducts().let {
-                    _products.value = it.map {
-                        it.copy(
-                            isFavourite = wishlistDao.isSkuInWishlist(
-                                sessionId = session.currentActiveSession().id, it.id.toLong()
-                            ),
-                            quantity = cartRepo.getCartItemBySkuId(skuId = it.id, sessionId = session.currentActiveSession().id)?.quantity?.toInt() ?: 0
-                        )
-                    }
                     saveSkusToDb(it.map {
                         Skus(
                             id = uuid4().toString(),
@@ -77,7 +72,7 @@ class ProductViewModel(
                             skuImage = it.image,
                             skuRatingRate = it.rating.rate.toString(),
                             skuRatingCount = it.rating.count.toLong(),
-                            sessionId = session.currentActiveSession()?.id ?: ""
+                            sessionId = session.currentActiveSession().id
                         )
                     })
                 }
@@ -116,9 +111,9 @@ class ProductViewModel(
                 wishlistDao.insert(Wishlist(sessionId = sessionId, skuId = skuId))
             }
 
-            _products.update { currentList ->
+            _displayProducts.update { currentList ->
                 currentList.map {
-                    if (it.id == skuId.toInt()) it.copy(isFavourite = !currentlyInWishlist) else it
+                    if (it.id.toLong() == skuId) it.copy(isWishlisted = if(currentlyInWishlist) 0L else 1L) else it
                 }
             }
         }
@@ -146,9 +141,9 @@ class ProductViewModel(
                     _wishlistProducts.value =  wishlistDao.getAllWishlistDisplay()
                 }
 
-                _products.update { currentList ->
+                _displayProducts.update { currentList ->
                     currentList.map {
-                        if (it.id == skuId.toInt()) it.copy(isFavourite = false) else it
+                        if (it.skuId == skuId) it.copy(isWishlisted = 0L) else it
                     }
                 }
             } catch (e: Exception) {
@@ -187,9 +182,9 @@ class ProductViewModel(
                         quantity = quantity
                     )
                 }
-                _products.update { currentList ->
+                _wishlistProducts.update { currentList ->
                     currentList.map {
-                        if (it.id == skuId.toInt()) it.copy(quantity = quantity) else it
+                        if (it.skuId == skuId) it.copy(quantity = quantity.toLong()) else it
                     }
                 }
             } catch (e: Exception) {
@@ -200,14 +195,14 @@ class ProductViewModel(
         }
     }
 
-    private val _selectedCategory = MutableStateFlow("All")
-    val selectedCategory: StateFlow<String> = _selectedCategory
 
-    private val _displayProducts = MutableStateFlow<List<SkuDisplay>>(emptyList())
-    val displayProducts: StateFlow<List<SkuDisplay>> get() = _displayProducts
 
     init {
-        fetchProducts()
+        fetchAndSaveProducts()
+        getProductDisplay()
+    }
+
+    fun getProductDisplay() {
         viewModelScope.launch {
             _selectedCategory
                 .flatMapLatest { category ->
