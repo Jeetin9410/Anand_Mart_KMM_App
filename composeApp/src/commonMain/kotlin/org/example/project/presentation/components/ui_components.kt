@@ -240,3 +240,24 @@ fun productItemShimmer(modifier: Modifier = Modifier) {
     }
 
 }
+
+@Composable
+fun CircleIconButton(
+    text: String,
+    contentDescription: String?,
+    onClick: () -> Unit
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier
+            .clip(CircleShape)
+            .size(24.dp)
+            .background(AppColors.borderSecondary) // Or use your theme color
+    ) {
+        Text(
+            text = text,
+            style = appTypography().body1,
+            color = Color.Black
+        )
+    }
+}

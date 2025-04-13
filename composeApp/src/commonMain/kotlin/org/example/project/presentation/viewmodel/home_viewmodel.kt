@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.benasher44.uuid.uuid4
 import com.example.project.Cart
+import com.example.project.CartDisplay
 import com.example.project.Session
 import com.example.project.SkuDisplay
 import com.example.project.Skus
@@ -52,9 +53,14 @@ class ProductViewModel(
     private val _wishlistProducts = MutableStateFlow<List<WishlistDisplay>>(emptyList())
     val wishlistProducts: StateFlow<List<WishlistDisplay>> = _wishlistProducts
 
-    /*init {
+    private val _displayCartProducts = MutableStateFlow<List<CartDisplay>>(emptyList())
+    val displayCartProducts: StateFlow<List<CartDisplay>> get() = _displayCartProducts
 
-    }*/
+
+    init {
+        fetchAndSaveProducts()
+        getProductDisplay()
+    }
 
     private fun fetchAndSaveProducts() {
         viewModelScope.launch {
@@ -66,7 +72,7 @@ class ProductViewModel(
                             id = uuid4().toString(),
                             skuId = it.id.toLong(),
                             skuName = it.title,
-                            skuPrice = it.price.toString(),
+                            skuPrice = (it.price * 10).toString(),
                             skuDescription = it.description,
                             skuCategory = it.category,
                             skuImage = it.image,
@@ -195,13 +201,6 @@ class ProductViewModel(
         }
     }
 
-
-
-    init {
-        fetchAndSaveProducts()
-        getProductDisplay()
-    }
-
     fun getProductDisplay() {
         viewModelScope.launch {
             _selectedCategory
@@ -220,6 +219,19 @@ class ProductViewModel(
 
     fun setSelectedCategory(category: String) {
         _selectedCategory.value = category
+    }
+
+    fun getCartProducts() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                _displayCartProducts.value = cartRepo.selectAllCartDisplay()
+            } catch (e: Exception) {
+
+            } finally {
+                _isLoading.value = false
+            }
+        }
     }
 
 }

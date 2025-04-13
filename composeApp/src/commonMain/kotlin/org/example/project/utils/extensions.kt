@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 fun Double.toPriceString(): String {
-    val rupees = this * 10
+    val rupees = this
     val formatted = (rupees * 100).toInt() / 100.0
     return "₹ ${formatted.toString().let {
         if (it.contains('.')) it else "$it.00"
