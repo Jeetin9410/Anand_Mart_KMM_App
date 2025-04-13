@@ -1,6 +1,8 @@
 package org.example.project.domain.repository
 
+import com.example.project.SkuDisplay
 import com.example.project.Skus
+import kotlinx.coroutines.flow.Flow
 
 interface SkuRepository {
     fun saveSku(sku: Skus)
@@ -9,5 +11,6 @@ interface SkuRepository {
     fun getSkusByCategory(category: String): List<Skus>?
     fun deleteSku(id: String)
     fun deleteAllSkus()
+    suspend fun getDisplayProductsFlow(sessionId: String): Flow<List<SkuDisplay>>
 
 }

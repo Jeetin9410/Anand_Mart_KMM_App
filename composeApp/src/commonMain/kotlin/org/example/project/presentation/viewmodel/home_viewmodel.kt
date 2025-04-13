@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.benasher44.uuid.uuid4
 import com.example.project.Cart
 import com.example.project.Session
+import com.example.project.SkuDisplay
 import com.example.project.Skus
 import com.example.project.Wishlist
 import com.example.project.WishlistDisplay
@@ -13,7 +14,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import org.example.project.network.ApiClient
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.example.project.config.AppConfig
 import org.example.project.domain.model.Product
@@ -43,9 +49,9 @@ class ProductViewModel(
     private val _wishlistProducts = MutableStateFlow<List<WishlistDisplay>>(emptyList())
     val wishlistProducts: StateFlow<List<WishlistDisplay>> = _wishlistProducts
 
-    init {
-        fetchProducts()
-    }
+    /*init {
+
+    }*/
 
     private fun fetchProducts() {
         viewModelScope.launch {
@@ -192,6 +198,33 @@ class ProductViewModel(
                 _isLoading.value = false
             }
         }
+    }
+
+    private val _selectedCategory = MutableStateFlow("All")
+    val selectedCategory: StateFlow<String> = _selectedCategory
+
+    private val _displayProducts = MutableStateFlow<List<SkuDisplay>>(emptyList())
+    val displayProducts: StateFlow<List<SkuDisplay>> get() = _displayProducts
+
+    init {
+        fetchProducts()
+        viewModelScope.launch {
+            _selectedCategory
+                .flatMapLatest { category ->
+                    skuRepository.getDisplayProductsFlow(session.currentActiveSession().id)
+                        .map { products ->
+                            if (category == "All") products
+                            else products.filter { it.skuCategory.trim().equals(category.trim(), ignoreCase = true) }
+                        }
+                }
+                .collect { filteredProducts ->
+                    _displayProducts.value = filteredProducts
+                }
+        }
+    }
+
+    fun setSelectedCategory(category: String) {
+        _selectedCategory.value = category
     }
 
 }

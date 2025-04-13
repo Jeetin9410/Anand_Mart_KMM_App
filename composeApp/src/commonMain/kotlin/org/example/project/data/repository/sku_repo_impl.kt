@@ -1,8 +1,15 @@
 package org.example.project.data.repository
 
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import com.benasher44.uuid.uuid4
 import com.example.project.AnandMartDb
+import com.example.project.SkuDisplay
 import com.example.project.Skus
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.flow.Flow
 import org.example.project.domain.repository.SkuRepository
 
 class SkuRepositoryImpl(private val db: AnandMartDb) : SkuRepository {
@@ -39,6 +46,13 @@ class SkuRepositoryImpl(private val db: AnandMartDb) : SkuRepository {
 
     override fun deleteAllSkus() {
         db.skusQueries.deleteAllSkus()
+    }
+
+    override suspend fun getDisplayProductsFlow(sessionId: String): Flow<List<SkuDisplay>> {
+        return db.skusQueries
+            .getAllDisplayProducts(sessionId)
+            .asFlow()
+            .mapToList(Dispatchers.IO)
     }
 
 }

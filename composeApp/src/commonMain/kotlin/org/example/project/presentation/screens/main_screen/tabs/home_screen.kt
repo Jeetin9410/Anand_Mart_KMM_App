@@ -51,6 +51,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -68,10 +69,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.example.project.SkuDisplay
 import compose.icons.AllIcons
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Brands
@@ -115,8 +118,7 @@ class HomeScreen : Screen, KoinComponent {
         val navigator = LocalNavigator.currentOrThrow
         val productViewModel = koinViewModel<ProductViewModel>()
         val appConfig: AppConfig = get()
-        val products by productViewModel.products.collectAsState()
-        var filteredProducts = products
+        val products by productViewModel.displayProducts.collectAsStateWithLifecycle()
         val isLoading by productViewModel.isLoading.collectAsState()
         var query by remember { mutableStateOf("") }
         val categories = listOf(
@@ -127,7 +129,7 @@ class HomeScreen : Screen, KoinComponent {
             "Jewelery",
             "Watches"
         )
-        var selectedCategory by remember { mutableStateOf(categories.first()) }
+
         val scrollState = rememberScrollState()
         val focusManager = LocalFocusManager.current
 
@@ -198,16 +200,9 @@ class HomeScreen : Screen, KoinComponent {
                     }
                     CategoryChipsTabs(
                         categories = categories,
-                        selectedCategory = selectedCategory,
+                        selectedCategory = productViewModel.selectedCategory.value,
                         onCategorySelected = { selected ->
-                            selectedCategory = selected
-                            if (selected == "All") {
-                                filteredProducts = products
-                            } else {
-                                filteredProducts = products.filter {
-                                    it.category.lowercase().equals(selected.lowercase())
-                                }
-                            }
+                            productViewModel.setSelectedCategory(selected)
                         }
                     )
 
@@ -236,61 +231,63 @@ class HomeScreen : Screen, KoinComponent {
                                 }
                             }
                         } else {
-                            filteredProducts.chunked(2).forEach { rowItems ->
+                            products.chunked(2).forEach { rowItems ->
                                 Row(
                                     modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
                                     rowItems.forEach { product ->
-                                        ProductItem(
-                                            modifier = Modifier.weight(1f),
-                                            product = product,
-                                            onClick = {
-                                                navigator.push(
-                                                    ProductDetails(
-                                                        ProductNew(
-                                                            title = product.title,
-                                                            priceBySize = mapOf(
-                                                                "S" to product.price,
-                                                                "M" to product.price.plus(10),
-                                                                "L" to product.price.plus(20),
-                                                                "XL" to product.price.plus(30)
-                                                            ),
-                                                            originalPrice = product.price.times(2),
-                                                            rating = product.rating.rate,
-                                                            description = product.description,
-                                                            images = listOf(
-                                                                product.image,
-                                                                product.image,
-                                                                product.image,
-                                                                product.image,
-                                                            ),
-                                                            sizes = listOf("S", "M", "L", "XL"),
-                                                            colors = listOf(
-                                                                0xFF80DEEA,
-                                                                0xFFCFD8DC,
-                                                                0xFFD32F2F,
-                                                                0xFFF8BBD0
-                                                            ),
-                                                            specs = mapOf(
-                                                                "Closure" to "Button",
-                                                                "Collar" to "Notched Lapel",
-                                                                "Fabric" to "Linen",
-                                                                "Length" to "Longline",
-                                                                "Lining Fabric" to "Unlined"
+                                        key(product.skuId) {
+                                            ProductItem(
+                                                modifier = Modifier.weight(1f),
+                                                product = product,
+                                                onClick = {
+                                                    navigator.push(
+                                                        ProductDetails(
+                                                            ProductNew(
+                                                                title = product.skuName,
+                                                                priceBySize = mapOf(
+                                                                    "S" to product.skuPrice.toDouble(),
+                                                                    "M" to product.skuPrice.toDouble().plus(10),
+                                                                    "L" to product.skuPrice.toDouble().plus(20),
+                                                                    "XL" to product.skuPrice.toDouble().plus(30)
+                                                                ),
+                                                                originalPrice = product.skuPrice.toDouble().times(2),
+                                                                rating = product.skuRatingRate.toDouble(),
+                                                                description = product.skuDescription,
+                                                                images = listOf(
+                                                                    product.skuImage,
+                                                                    product.skuImage,
+                                                                    product.skuImage,
+                                                                    product.skuImage,
+                                                                ),
+                                                                sizes = listOf("S", "M", "L", "XL"),
+                                                                colors = listOf(
+                                                                    0xFF80DEEA,
+                                                                    0xFFCFD8DC,
+                                                                    0xFFD32F2F,
+                                                                    0xFFF8BBD0
+                                                                ),
+                                                                specs = mapOf(
+                                                                    "Closure" to "Button",
+                                                                    "Collar" to "Notched Lapel",
+                                                                    "Fabric" to "Linen",
+                                                                    "Length" to "Longline",
+                                                                    "Lining Fabric" to "Unlined"
+                                                                )
                                                             )
                                                         )
                                                     )
-                                                )
-                                            },
-                                            onWishlistClick = {
-                                                productViewModel.toggleWishlist(product.id.toLong())
-                                            },
-                                            onAddToCartClick = { quantity ->
-                                                println("Title : ${product.title} , id : ${product.id} - Quantity: $quantity " )
-                                                productViewModel.addToCart(product.id.toLong(), quantity)
-                                            }
-                                        )
+                                                },
+                                                onWishlistClick = {
+                                                    productViewModel.toggleWishlist(product.skuId)
+                                                },
+                                                onAddToCartClick = { quantity ->
+                                                    println("Title : ${product.skuName} , id : ${product.id} - Quantity: $quantity " )
+                                                    productViewModel.addToCart(product.skuId, quantity)
+                                                }
+                                            )
+                                        }
                                     }
                                     if (rowItems.size == 1) {
                                         Spacer(Modifier.weight(1f))
@@ -329,7 +326,7 @@ fun NetworkImage(url: String, modifier: Modifier, contentScale: ContentScale = C
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProductItem(
-    product: Product,
+    product: SkuDisplay,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     onWishlistClick: () -> Unit = {},
@@ -347,7 +344,7 @@ fun ProductItem(
 
             Box {
                 NetworkImage(
-                    product.image,
+                    product.skuImage,
                     modifier = Modifier
                         .height(100.dp)
                         .fillMaxWidth()
@@ -366,9 +363,9 @@ fun ProductItem(
                         .size(28.dp)
                 ) {
                     Icon(
-                        imageVector = if (product.isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        imageVector = if (product.isWishlisted.toInt() == 1) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Wishlist",
-                        tint = if (product.isFavourite) Color.Red else Color.Gray,
+                        tint = if (product.isWishlisted.toInt() == 1) Color.Red else Color.Gray,
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -379,7 +376,7 @@ fun ProductItem(
                 modifier = Modifier.fillMaxWidth().padding(end = 5.dp),
                 horizontalArrangement = Arrangement.End
             ) {
-                product.category.let {
+                product.skuCategory.let {
                     CategoryChip(category = it)
                 }
 
@@ -390,7 +387,7 @@ fun ProductItem(
             // Product details
             Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 12.dp)) {
                 Text(
-                    text = product.title,
+                    text = product.skuName,
                     style = appTypography().subtitle2,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
@@ -405,14 +402,14 @@ fun ProductItem(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = product.price.toPriceString(),
+                        text = product.skuPrice.toDouble().toPriceString(),
                         style = MaterialTheme.typography.body2.copy(
                             color = AppColors.textPrimary
                         ),
                         fontWeight = FontWeight.Normal
                     )
 
-                    RatingBar(rating = product.rating.rate)
+                    RatingBar(rating = product.skuRatingRate.toDouble())
                 }
 
                 Box(
@@ -420,7 +417,7 @@ fun ProductItem(
                         .padding(top = 5.dp, start = 5.dp, end = 5.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    AddToCartButton(initialQuantity = product.quantity) { quantity ->
+                    AddToCartButton(initialQuantity = product.quantityInCart.toInt()) { quantity ->
                         onAddToCartClick(quantity)
                     }
                 }

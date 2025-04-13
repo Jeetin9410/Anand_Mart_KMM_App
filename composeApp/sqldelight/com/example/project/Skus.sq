@@ -11,6 +11,25 @@ CREATE TABLE Skus (
     skuRatingCount INTEGER NOT NULL
 );
 
+CREATE VIEW SkuDisplay AS
+SELECT
+    Skus.id AS id,
+    Skus.sessionId AS sessionId,
+    Skus.skuId AS skuId,
+    Skus.skuName AS skuName,
+    Skus.skuPrice AS skuPrice,
+    Skus.skuDescription AS skuDescription,
+    Skus.skuCategory AS skuCategory,
+    Skus.skuImage AS skuImage,
+    Skus.skuRatingRate AS skuRatingRate,
+    Skus.skuRatingCount AS skuRatingCount,
+    CASE WHEN Wishlist.skuId IS NOT NULL THEN 1 ELSE 0 END AS isWishlisted,
+    IFNULL(Cart.quantity, 0) AS quantityInCart
+FROM Skus
+LEFT JOIN Wishlist ON Skus.skuId = Wishlist.skuId AND Skus.sessionId = Wishlist.sessionId
+LEFT JOIN Cart ON Skus.skuId = Cart.skuId AND Skus.sessionId = Cart.sessionId;
+
+
 -- Queries
 insertSku:
 INSERT INTO Skus(
@@ -64,3 +83,7 @@ SELECT EXISTS(
 
 deleteAllSkus:
 DELETE FROM Skus;
+
+getAllDisplayProducts:
+SELECT * FROM SkuDisplay
+WHERE sessionId = :sessionId;

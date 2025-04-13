@@ -71,6 +71,7 @@ fun AddToCartButton(
                     tint = Color.White,
                     contentDescription = "Add to Cart",
                 )
+                quantity = 0
             } else {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
