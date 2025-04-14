@@ -30,6 +30,7 @@ import org.example.project.domain.repository.SessionRepository
 import org.example.project.domain.repository.SkuRepository
 import org.example.project.domain.repository.WishListRepository
 import kotlinx.coroutines.flow.update
+import org.example.project.domain.model.UsersModel
 import org.example.project.domain.repository.CartRepository
 
 class ProductViewModel(
@@ -232,6 +233,10 @@ class ProductViewModel(
                 _isLoading.value = false
             }
         }
+    }
+
+    fun getUserDetails() : UsersModel {
+        return session.getUserDetails()
     }
 
 }

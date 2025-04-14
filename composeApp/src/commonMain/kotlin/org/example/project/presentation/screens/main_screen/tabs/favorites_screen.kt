@@ -47,12 +47,16 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.project.AnandMartDb
 import com.example.project.SkuDisplay
+import kotlinproject.composeapp.generated.resources.Res
+import kotlinproject.composeapp.generated.resources.empty_state_icon
+import kotlinproject.composeapp.generated.resources.no_data_icon
 import org.example.project.config.AppConfig
 import org.example.project.domain.model.Product
 import org.example.project.domain.model.Rating
 import org.example.project.presentation.components.AddToCartButton
 import org.example.project.presentation.components.CategoryChipsTabs
 import org.example.project.presentation.components.RatingBar
+import org.example.project.presentation.components.emptyStateUi
 import org.example.project.presentation.components.productItemShimmer
 import org.example.project.presentation.screens.product_details_screen.ProductDetails
 import org.example.project.presentation.screens.product_details_screen.ProductNew
@@ -81,8 +85,7 @@ class FavoritesScreen : Screen, KoinComponent {
             "Men's Clothing",
             "Women's Clothing",
             "Electronics",
-            "Jewelery",
-            "Watches"
+            "Jewelery"
         )
         var selectedCategory by remember { mutableStateOf(categories.first()) }
 
@@ -95,112 +98,136 @@ class FavoritesScreen : Screen, KoinComponent {
                     backgroundColor = Color.White,
                     elevation = 2.dp,
                     navigationIcon = {
+                        IconButton(onClick = { navigator.pop() }) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                contentDescription = "Back",
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
                     }
                 )
             },
         ) {
-            Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
-                Text(
-                    "Filters",
-                    style = appTypography().subtitle1,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(start = 8.dp, end = 8.dp, top = 8.dp)
+            if(products.isEmpty()) {
+                emptyStateUi(
+                    image = Res.drawable.empty_state_icon,
+                    title = "Nothing in your wishlist",
+                    description = "Show some love, start adding to wishlist"
                 )
-                CategoryChipsTabs(
-                    categories = categories,
-                    selectedCategory = selectedCategory,
-                    onCategorySelected = { selected ->
-                        selectedCategory = selected
-                        if (selected == "All") {
-                            filteredProducts = products
-                        } else {
-                            filteredProducts = products.filter {
-                                it.skuCategory.lowercase().equals(selected.lowercase())
+            } else {
+                Column(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
+                    Text(
+                        "Filters",
+                        style = appTypography().subtitle1,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 8.dp, end = 8.dp, top = 8.dp)
+                    )
+                    CategoryChipsTabs(
+                        categories = categories,
+                        selectedCategory = selectedCategory,
+                        onCategorySelected = { selected ->
+                            selectedCategory = selected
+                            if (selected == "All") {
+                                filteredProducts = products
+                            } else {
+                                filteredProducts = products.filter {
+                                    it.skuCategory.lowercase().equals(selected.lowercase())
+                                }
                             }
                         }
-                    }
-                )
+                    )
 
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(2.dp),
-                    horizontalArrangement = Arrangement.spacedBy(2.dp),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    if (isLoading) {
-                        items(6) { productItemShimmer() }
+                    if(filteredProducts.isEmpty()) {
+                        emptyStateUi(
+                            image = Res.drawable.no_data_icon,
+                            title = "No products found",
+                            description = ""
+                        )
                     } else {
-                        items(filteredProducts) { product ->
-                            key(product.skuId) {
-                                WishListProductItem(
-                                    product = Product(
-                                        id = product.skuId.toInt(),
-                                        title = product.skuName,
-                                        price = product.skuPrice.toDouble(),
-                                        description = product.skuDescription,
-                                        category = product.skuCategory,
-                                        image = product.skuImage,
-                                        rating = Rating(
-                                            rate = product.skuRatingRate.toDouble(),
-                                            count = product.skuRatingCount.toInt()
-                                        ),
-                                        isFavourite = true,
-                                        quantity = product.quantity?.toInt() ?: 0
-                                    ),
-                                    modifier = Modifier.padding(4.dp),
-                                    onClick = {
-                                        navigator.push(
-                                            ProductDetails(
-                                                ProductNew(
-                                                    title = product.skuName,
-                                                    priceBySize = mapOf(
-                                                        "S" to product.skuPrice.toDouble(),
-                                                        "M" to product.skuPrice.toDouble().plus(10),
-                                                        "L" to product.skuPrice.toDouble().plus(20),
-                                                        "XL" to product.skuPrice.toDouble().plus(30)
-                                                    ),
-                                                    originalPrice = product.skuPrice.toDouble().times(2),
-                                                    rating = product.skuRatingRate.toDouble(),
-                                                    description = product.skuDescription,
-                                                    images = listOf(
-                                                        product.skuImage,
-                                                        product.skuImage,
-                                                        product.skuImage,
-                                                        product.skuImage,
-                                                    ),
-                                                    sizes = listOf("S", "M", "L", "XL"),
-                                                    colors = listOf(
-                                                        0xFF80DEEA,
-                                                        0xFFCFD8DC,
-                                                        0xFFD32F2F,
-                                                        0xFFF8BBD0
-                                                    ),
-                                                    specs = mapOf(
-                                                        "Closure" to "Button",
-                                                        "Collar" to "Notched Lapel",
-                                                        "Fabric" to "Linen",
-                                                        "Length" to "Longline",
-                                                        "Lining Fabric" to "Unlined"
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier.fillMaxWidth(),
+                            contentPadding = PaddingValues(2.dp),
+                            horizontalArrangement = Arrangement.spacedBy(2.dp),
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            if (isLoading) {
+                                items(6) { productItemShimmer() }
+                            } else {
+                                items(filteredProducts) { product ->
+                                    key(product.skuId) {
+                                        WishListProductItem(
+                                            product = Product(
+                                                id = product.skuId.toInt(),
+                                                title = product.skuName,
+                                                price = product.skuPrice.toDouble(),
+                                                description = product.skuDescription,
+                                                category = product.skuCategory,
+                                                image = product.skuImage,
+                                                rating = Rating(
+                                                    rate = product.skuRatingRate.toDouble(),
+                                                    count = product.skuRatingCount.toInt()
+                                                ),
+                                                isFavourite = true,
+                                                quantity = product.quantity?.toInt() ?: 0
+                                            ),
+                                            modifier = Modifier.padding(4.dp),
+                                            onClick = {
+                                                navigator.push(
+                                                    ProductDetails(
+                                                        ProductNew(
+                                                            title = product.skuName,
+                                                            priceBySize = mapOf(
+                                                                "S" to product.skuPrice.toDouble(),
+                                                                "M" to product.skuPrice.toDouble().plus(10),
+                                                                "L" to product.skuPrice.toDouble().plus(20),
+                                                                "XL" to product.skuPrice.toDouble().plus(30)
+                                                            ),
+                                                            originalPrice = product.skuPrice.toDouble().times(2),
+                                                            rating = product.skuRatingRate.toDouble(),
+                                                            description = product.skuDescription,
+                                                            images = listOf(
+                                                                product.skuImage,
+                                                                product.skuImage,
+                                                                product.skuImage,
+                                                                product.skuImage,
+                                                            ),
+                                                            sizes = listOf("S", "M", "L", "XL"),
+                                                            colors = listOf(
+                                                                0xFF80DEEA,
+                                                                0xFFCFD8DC,
+                                                                0xFFD32F2F,
+                                                                0xFFF8BBD0
+                                                            ),
+                                                            specs = mapOf(
+                                                                "Closure" to "Button",
+                                                                "Collar" to "Notched Lapel",
+                                                                "Fabric" to "Linen",
+                                                                "Length" to "Longline",
+                                                                "Lining Fabric" to "Unlined"
+                                                            )
+                                                        )
                                                     )
                                                 )
-                                            )
-                                        )
-                                    },
-                                    onWishlistClick = {
-                                        productViewModel.removeSkuFromWishlist(product.skuId)
-                                    },
-                                    onAddToCartClick = { quantity ->
-                                        productViewModel.addToCart(product.skuId.toLong(), quantity)
+                                            },
+                                            onWishlistClick = {
+                                                productViewModel.removeSkuFromWishlist(product.skuId)
+                                            },
+                                            onAddToCartClick = { quantity ->
+                                                productViewModel.addToCart(product.skuId.toLong(), quantity)
 
+                                            }
+                                        )
                                     }
-                                )
+                                }
                             }
                         }
                     }
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
-                Spacer(modifier = Modifier.height(80.dp))
+
             }
         }
 

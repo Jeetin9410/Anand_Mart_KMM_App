@@ -58,6 +58,8 @@ data class Address(
             zipcode = ""
             )
     }
+
+    fun completeAddress() = "$number $street, $city, $zipcode"
 }
 
 @Serializable
@@ -73,6 +75,8 @@ data class Name(
             lastname = "User"
         )
     }
+
+    fun getFullName() = "$firstname $lastname"
 }
 
 @Serializable

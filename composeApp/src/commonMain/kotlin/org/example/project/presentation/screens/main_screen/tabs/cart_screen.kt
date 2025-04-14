@@ -1,7 +1,6 @@
 package org.example.project.presentation.screens.main_screen.tabs
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,9 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -33,9 +31,8 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.Delete
@@ -46,8 +43,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key.Companion.R
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,23 +52,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.example.project.CartDisplay
 import com.example.project.SkuDisplay
 import compose.icons.AllIcons
 import compose.icons.FontAwesomeIcons
-import compose.icons.fontawesomeicons.Regular
-import compose.icons.fontawesomeicons.Solid
-import compose.icons.fontawesomeicons.regular.CalendarMinus
-import compose.icons.fontawesomeicons.regular.MinusSquare
-import compose.icons.fontawesomeicons.regular.WindowMinimize
-import compose.icons.fontawesomeicons.solid.Minus
-import compose.icons.fontawesomeicons.solid.Plus
-import org.example.project.App
-import org.example.project.presentation.components.AddToCartButton
+import kotlinproject.composeapp.generated.resources.Res
+import kotlinproject.composeapp.generated.resources.empty_cart
+import org.example.project.domain.model.UsersModel
 import org.example.project.presentation.components.CircleIconButton
+import org.example.project.presentation.components.emptyStateUi
 import org.example.project.presentation.viewmodel.ProductViewModel
 import org.example.project.theme.colors.AppColors
 import org.example.project.theme.typography.appTypography
+import org.example.project.utils.toPriceString
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.component.KoinComponent
 
@@ -88,8 +80,12 @@ class CartScreen : Screen, KoinComponent {
                 TopAppBar(
                     title = { Text("Cart", style = appTypography().h6) },
                     navigationIcon = {
-                        IconButton(onClick = { /* handle back */ }) {
-                            Icon(Icons.Default.ShoppingCart, contentDescription = "Back")
+                        IconButton(onClick = { navigator.pop() }) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                contentDescription = "Back",
+                                modifier = Modifier.size(28.dp)
+                            )
                         }
                     },
                     backgroundColor = Color.White,
@@ -98,26 +94,49 @@ class CartScreen : Screen, KoinComponent {
             },
             backgroundColor = Color.White,
             bottomBar = {
-                BottomBar(totalAmount = 750)
+                if (products.filter { it.quantityInCart > 0 }.isNotEmpty()) {
+                    Column {
+                        BottomBar(totalAmount = 750)
+                        Spacer(modifier = Modifier.height(70.dp))
+                    }
+                }
             }
         ) { padding ->
-            BodyContent(Modifier.padding(padding), products.filter { it.quantityInCart > 0 })
+            products.filter { it.quantityInCart > 0 }.let { list ->
+                if (list.isEmpty()) {
+                    emptyStateUi(
+                        image = Res.drawable.empty_cart,
+                        title = "Your cart is empty",
+                        description = "Start shopping"
+                    )
+                } else {
+                    BodyContent(
+                        userDetails = productViewModel.getUserDetails(),
+                        Modifier.padding(padding),
+                        products.filter { it.quantityInCart > 0 },
+                        onDelete = { skuId ->
+                            productViewModel.addToCart(skuId, 0)
+                        }
+                    )
+
+                }
+            }
         }
 
     }
 }
 
 @Composable
-fun BodyContent(modifier: Modifier = Modifier, products: List<SkuDisplay>) {
+fun BodyContent( userDetails: UsersModel, modifier: Modifier = Modifier, products: List<SkuDisplay> , onDelete: (skuId: Long) -> Unit) {
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
         AddressSection(
-            name = "Faizan Khan",
-            pinCode = "344022",
-            address = "Opp State Bank Of India, Asotra"
+            name = "John Doe",
+            pinCode = userDetails.address.zipcode,
+            address = "B-Block, H/o 24, Park Avenue\nNew Jersey"
         )
 
         Text(
@@ -130,7 +149,9 @@ fun BodyContent(modifier: Modifier = Modifier, products: List<SkuDisplay>) {
         Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f)) {
             products.forEach { product ->
                 key(product.skuId) {
-                    CartItemCard(product)
+                    CartItemCard(product) {
+                        onDelete.invoke(it)
+                    }
                 }
             }
         }
@@ -140,18 +161,20 @@ fun BodyContent(modifier: Modifier = Modifier, products: List<SkuDisplay>) {
         OfferSection()
         Spacer(modifier = Modifier.height(12.dp))
         Spacer(modifier = Modifier.height(12.dp))
-
+        val totalPrice = products.sumOf { it.quantityInCart.toDouble() * it.skuPrice.toDouble() }
         PaymentDetailsSection(
-            itemCount = 2,
-            totalPrice = 750,
-            discount = 0,
-            deliveryCharges = "FREE"
+            itemCount = products.size,
+            totalPrice = totalPrice.toDouble().toPriceString(),
+            discount = (0.5 * totalPrice).toDouble().toPriceString(),
+            savedPrice = (0.5 * totalPrice).toDouble().toPriceString(),
+            deliveryCharges = "FREE",
+            totalAmount = (totalPrice - (0.5 * totalPrice)).toPriceString()
         )
     }
 }
 
 @Composable
-fun CartItemCard(product: SkuDisplay) {
+fun CartItemCard(product: SkuDisplay, onDelete: (skuId: Long) -> Unit) {
     Card(
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(0.5.dp, Color.LightGray),
@@ -177,7 +200,9 @@ fun CartItemCard(product: SkuDisplay) {
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f)
                     )
-                    IconButton(onClick = { /* delete item */ }, modifier = Modifier.size(22.dp)) {
+                    IconButton(onClick = {
+                        onDelete.invoke(product.skuId)
+                    }, modifier = Modifier.size(22.dp)) {
                         Icon(
                             Icons.Outlined.Delete,
                             contentDescription = "Delete",
@@ -186,15 +211,39 @@ fun CartItemCard(product: SkuDisplay) {
                     }
                 }
 
+                val currentPrice = product.skuPrice.toDouble() * product.quantityInCart.toDouble()
+                val originalPrice =
+                    2 * product.skuPrice.toDouble() * product.quantityInCart.toDouble()
+                val percentage = ((originalPrice - currentPrice) / originalPrice) * 100
+
+                Row(
+                    modifier = Modifier.fillMaxWidth().wrapContentHeight().padding(vertical = 2.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "${product.skuPrice.toDouble() * product.quantityInCart.toDouble()}".toDouble()
+                            .toPriceString(), style = appTypography().subtitle2,
+                        fontWeight = FontWeight.Normal
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        "${2 * product.skuPrice.toDouble() * product.quantityInCart.toDouble()}".toDouble()
+                            .toPriceString(),
+                        style = appTypography().caption.copy(textDecoration = TextDecoration.LineThrough),
+                        color = Color.Gray
+                    )
+                    Spacer(Modifier.weight(1f))
+                    Text("⭐ ${product.skuRatingRate}", color = Color(0xFFFFC107))
+                }
+
                 Text(
-                    text = "Rs.${product.skuPrice}",
-                    style = MaterialTheme.typography.body2.copy(
-                        color = AppColors.textPrimary
-                    ),
-                    fontWeight = FontWeight.Normal,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(vertical = 5.dp)
+                    text = "You saving ${percentage.toInt()}% on this",
+                    style = appTypography().caption,
+                    color = Color(0xFF2E7D32),
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 2.dp)
                 )
+
 
                 Box(
                     modifier = Modifier.fillMaxWidth(),
@@ -243,11 +292,11 @@ fun OfferSection() {
             modifier = Modifier
                 .clickable { /* handle offer click */ }
                 .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                "Avail Offer (Coupon Code)",
-                modifier = Modifier.weight(1f),
+                "Offers",
                 style = appTypography().subtitle2
             )
             Icon(Icons.Default.KeyboardArrowRight, contentDescription = null)
@@ -263,38 +312,35 @@ fun AddressSection(name: String, pinCode: String, address: String) {
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                "Home Address",
-                color = Color.Black,
-                fontSize = 12.sp,
-                style = appTypography().caption
-            )
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Top
             ) {
+
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
+                    modifier = Modifier.wrapContentHeight().padding(vertical = 2.dp),
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        "$name,",
-                        fontWeight = FontWeight.Bold,
-                        style = appTypography().subtitle2,
-                        color = Color.Gray
-                    )
-                    Text(
-                        "$address,\n$pinCode",
-                        fontWeight = FontWeight.Bold,
-                        style = appTypography().caption,
-                        color = Color.Gray
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = "Home",
+                        modifier = Modifier.size(16.dp)
                     )
                 }
+
+                Text(
+                    "Home Address",
+                    color = Color.Black,
+                    modifier = Modifier.weight(1f).padding(horizontal = 2.dp),
+                    style = appTypography().subtitle2
+                )
 
                 Text(
                     "Change",
                     modifier = Modifier
                         .wrapContentWidth()
+                        .wrapContentHeight()
                         .padding(start = 8.dp),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -304,26 +350,56 @@ fun AddressSection(name: String, pinCode: String, address: String) {
                 )
             }
 
+            Column(
+                modifier = Modifier
+            ) {
+                Text(
+                    "$name,",
+                    fontWeight = FontWeight.Bold,
+                    style = appTypography().subtitle2,
+                    color = Color.Gray
+                )
+                Text(
+                    "$address,\n$pinCode",
+                    fontWeight = FontWeight.Bold,
+                    style = appTypography().caption,
+                    color = Color.Gray
+                )
+            }
+
         }
     }
 }
 
 @Composable
-fun PaymentDetailsSection(itemCount: Int, totalPrice: Int, discount: Int, deliveryCharges: String) {
+fun PaymentDetailsSection(
+    itemCount: Int,
+    totalPrice: String,
+    discount: String,
+    savedPrice: String,
+    deliveryCharges: String,
+    totalAmount: String
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .border(BorderStroke(1.dp, Color.LightGray), RoundedCornerShape(12.dp))
+            .border(BorderStroke(0.5.dp, Color.LightGray), RoundedCornerShape(12.dp))
             .padding(16.dp)
     ) {
-        Text("Payment Details", fontWeight = FontWeight.Bold)
+        Text("Payment Details", style = appTypography().subtitle2)
         Spacer(modifier = Modifier.height(8.dp))
-        PaymentRow("Price ($itemCount items)", totalPrice.toString())
-        PaymentRow("Discount", discount.toString())
+        PaymentRow("Price ($itemCount items)", totalPrice)
+        PaymentRow("Discount", discount)
         PaymentRow("Delivery Charges", deliveryCharges)
         Divider(modifier = Modifier.padding(vertical = 8.dp))
-        PaymentRow("Total Amount", totalPrice.toString(), isBold = true)
-        Text("You saved 120 on this order", color = Color(0xFF2E7D32), fontSize = 12.sp)
+        PaymentRow("Total Amount", totalAmount, isBold = true)
+        Text(
+            "You saved $savedPrice on this order",
+            color = AppColors.primary,
+            fontSize = 12.sp,
+            style = appTypography().caption,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -333,9 +409,10 @@ fun PaymentRow(label: String, value: String, isBold: Boolean = false) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(label)
+        Text(label, style = appTypography().caption)
         Text(
             text = value,
+            style = appTypography().caption,
             fontWeight = if (isBold) FontWeight.Bold else FontWeight.Normal
         )
     }
@@ -345,22 +422,33 @@ fun PaymentRow(label: String, value: String, isBold: Boolean = false) {
 fun BottomBar(totalAmount: Int) {
     Row(
         modifier = Modifier
+            .fillMaxWidth()
             .background(Color.White)
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End
     ) {
-        Text(
-            text = "Rs.$totalAmount",
-            color = Color.Red,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.weight(1f)
-        )
+        Column(modifier = Modifier.padding(horizontal = 5.dp)) {
+            Text(
+                text = "Total Amount: ",
+                color = Color.Gray,
+                fontWeight = FontWeight.Bold,
+                style = appTypography().caption
+            )
+            Text(
+                text = totalAmount.toDouble().toPriceString(),
+                color = Color(0xFF2E7D32),
+                fontWeight = FontWeight.Bold,
+                style = appTypography().subtitle1
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
         Button(
             onClick = { /* proceed action */ },
             shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF2E7D32))
+            colors = ButtonDefaults.buttonColors(backgroundColor = AppColors.primary)
         ) {
-            Text("Proceed", color = Color.White)
+            Text("Proceed", color = Color.White, style = appTypography().button)
         }
     }
 }

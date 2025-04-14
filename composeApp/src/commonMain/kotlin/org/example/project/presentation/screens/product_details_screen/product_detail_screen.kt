@@ -226,7 +226,7 @@ fun ProductDetailsScreen(
                 Spacer(Modifier.width(8.dp))
                 Text(
                     product.originalPrice.toPriceString(),
-                    style = MaterialTheme.typography.body2.copy(textDecoration = TextDecoration.LineThrough),
+                    style = appTypography().body2.copy(textDecoration = TextDecoration.LineThrough),
                     color = Color.Gray
                 )
                 Spacer(Modifier.weight(1f))

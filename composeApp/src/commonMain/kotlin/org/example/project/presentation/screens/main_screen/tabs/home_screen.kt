@@ -126,15 +126,14 @@ class HomeScreen : Screen, KoinComponent {
             "Men's Clothing",
             "Women's Clothing",
             "Electronics",
-            "Jewelery",
-            "Watches"
+            "Jewelery"
         )
 
         val scrollState = rememberScrollState()
         val focusManager = LocalFocusManager.current
 
         Scaffold(topBar = {
-            AppBarRow(subText = "A-Block, 22/D, Mayapuri, Delhi....")
+            AppBarRow(subText = "B-Block, H/o 24, Park Avenue, New Jersey")
         }) {
             Box(
                 modifier = Modifier

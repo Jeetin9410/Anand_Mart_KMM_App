@@ -261,3 +261,36 @@ fun CircleIconButton(
         )
     }
 }
+
+@Composable
+fun emptyStateUi(
+    image: DrawableResource,
+    title: String,
+    description: String
+) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(bottom = 60.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    )
+    {
+        Image(
+            painter = painterResource(image),
+            contentDescription = "",
+            modifier = Modifier.size(180.dp)
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = title,
+            style = appTypography().h6,
+            fontWeight = FontWeight.Normal
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = description,
+            style = appTypography().subtitle2,
+            fontWeight = FontWeight.Normal
+        )
+
+    }
+}
