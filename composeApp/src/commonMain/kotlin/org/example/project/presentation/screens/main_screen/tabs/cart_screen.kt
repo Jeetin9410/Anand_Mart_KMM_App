@@ -95,8 +95,9 @@ class CartScreen : Screen, KoinComponent {
             backgroundColor = Color.White,
             bottomBar = {
                 if (products.filter { it.quantityInCart > 0 }.isNotEmpty()) {
+                    val totalPrice = products.sumOf { it.quantityInCart.toDouble() * it.skuPrice.toDouble() }
                     Column {
-                        BottomBar(totalAmount = 750)
+                        BottomBar(totalAmount = (totalPrice - 0.5 * totalPrice))
                         Spacer(modifier = Modifier.height(70.dp))
                     }
                 }
@@ -233,7 +234,7 @@ fun CartItemCard(product: SkuDisplay, onDelete: (skuId: Long) -> Unit) {
                         color = Color.Gray
                     )
                     Spacer(Modifier.weight(1f))
-                    Text("⭐ ${product.skuRatingRate}", color = Color(0xFFFFC107))
+                    Text("⭐ ${product.skuRatingRate}", color = Color(0xFFFFC107), style = appTypography().caption)
                 }
 
                 Text(
@@ -419,7 +420,7 @@ fun PaymentRow(label: String, value: String, isBold: Boolean = false) {
 }
 
 @Composable
-fun BottomBar(totalAmount: Int) {
+fun BottomBar(totalAmount: Double) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -436,7 +437,7 @@ fun BottomBar(totalAmount: Int) {
                 style = appTypography().caption
             )
             Text(
-                text = totalAmount.toDouble().toPriceString(),
+                text = totalAmount.toPriceString(),
                 color = Color(0xFF2E7D32),
                 fontWeight = FontWeight.Bold,
                 style = appTypography().subtitle1
