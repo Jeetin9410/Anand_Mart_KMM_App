@@ -126,5 +126,7 @@ fun EditProfileScreen(
         ProfileTextField("User name", username, onValueChange = {}, enabled = false)
         ProfileTextField("Password", password, onPasswordChange, isPassword = true)
         ProfileTextField("Phone number", phoneNumber, onPhoneChange)
+
+        Spacer(modifier = Modifier.height(80.dp))
     }
 }

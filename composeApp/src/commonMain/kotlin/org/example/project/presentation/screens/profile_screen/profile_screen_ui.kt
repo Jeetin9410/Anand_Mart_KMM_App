@@ -75,5 +75,7 @@ fun ProfileScreenUi(
             "Log out",
             iconTint = Color.Red
         ) { onItemClicked("Log out") }
+
+        Spacer(modifier = Modifier.height(80.dp))
     }
 }
