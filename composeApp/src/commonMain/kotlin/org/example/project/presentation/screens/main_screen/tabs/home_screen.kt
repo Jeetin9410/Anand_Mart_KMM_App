@@ -88,6 +88,7 @@ import kotlinproject.composeapp.generated.resources.nike
 import kotlinproject.composeapp.generated.resources.rolex
 import org.example.project.config.AppConfig
 import org.example.project.domain.model.Product
+import org.example.project.getPlatform
 import org.example.project.presentation.components.AddToCartButton
 import org.example.project.presentation.components.AppBarRow
 import org.example.project.presentation.components.BannerItem
@@ -472,6 +473,6 @@ fun OffersCarousel() {
     ParallaxCarouselBanner(
         items = sampleItems,
         autoScrollInterval = 3000L,
-        //bannerHeight = 250,
+        bannerHeight = if(getPlatform().name == "Desktop") 200.dp else 150.dp,
     )
 }

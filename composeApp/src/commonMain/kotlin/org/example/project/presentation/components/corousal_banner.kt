@@ -34,7 +34,7 @@ import org.example.project.theme.typography.appTypography
 fun ParallaxCarouselBanner(
     items: List<BannerItem>,
     autoScrollInterval: Long = 5000L,
-    bannerHeight: Dp = 150.dp,
+    bannerHeight: Dp = 300.dp,
     cornerRadius: Dp = 16.dp,
     modifier: Modifier = Modifier
 ) {
