@@ -37,15 +37,12 @@ A cutting-edge **Kotlin Multiplatform** project demonstrating a shared **Jetpack
 
 ---
 <div align="center" style="display: flex; justify-content: center; gap: 100px;">
-  <img src="https://github.com/Jeetin9410/Anand_Mart_KMM_App/blob/master/rec/demo_ios.gif?raw=true" width="400" />
   <img src="https://github.com/Jeetin9410/Anand_Mart_KMM_App/blob/master/rec/demo_android.gif?raw=true" width="400" />
+  <img src="https://github.com/Jeetin9410/Anand_Mart_KMM_App/blob/master/rec/demo_ios.gif?raw=true" width="400" />
 </div>
 
 ---
-
-![Logo](https://github.com/Jeetin9410/Anand_Mart_KMM_App/blob/master/rec/img.png)
-
-<div align="center">
-  <img src="https://github.com/Jeetin9410/Anand_Mart_KMM_App/blob/master/rec/screenshot1.png?raw=true" width="600" alt="Screenshot 1"/>
-  <img src="https://github.com/Jeetin9410/Anand_Mart_KMM_App/blob/master/rec/screenshot2.png?raw=true" width="600" alt="Screenshot 2"/> 
+<div align="center" style="display: flex; justify-content: center; gap: 100px;">
+  <img src="https://github.com/Jeetin9410/Anand_Mart_KMM_App/blob/master/rec/demo_desktop.gif?raw=true" width="800" />
 </div>
+
